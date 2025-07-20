@@ -17,7 +17,7 @@ const Register = () => {
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
-    const nameRegex = /^[a-zA-ZàèéìòùÀÈÉÌÒÙ' ]{2,}$/;
+const nameRegex = /^[a-zA-Z0-9]{2,}$/;
     if (!nameRegex.test(name.trim())) {
       setErrorMessage('Il nome può contenere solo lettere, spazi e apostrofi.');
       return;
