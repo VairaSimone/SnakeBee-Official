@@ -43,13 +43,16 @@ const ConfirmModal = ({ show, title, message, onConfirm, onCancel }) => {
     </div>
   );
 };
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+const nameRegex = /^[a-zA-Z0-9]{2,}$/;
 
 const UserProfile = () => {
   const [user, setUser] = useState(null);
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [avatar, setAvatar] = useState('');
-const [avatarPreview, setAvatarPreview] = useState('');
+  const [avatarPreview, setAvatarPreview] = useState('');
 
   // toasts management
   const [toasts, setToasts] = useState([]);
@@ -70,7 +73,7 @@ const [avatarPreview, setAvatarPreview] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordError, setPasswordError] = useState('');
-const [confirmNewEmail, setConfirmNewEmail] = useState('');
+  const [confirmNewEmail, setConfirmNewEmail] = useState('');
 
   // delete confirm
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -81,16 +84,16 @@ const [confirmNewEmail, setConfirmNewEmail] = useState('');
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
-useEffect(() => {
-  if (avatar instanceof File) {
-    const objectUrl = URL.createObjectURL(avatar);
-    setAvatarPreview(objectUrl);
+  useEffect(() => {
+    if (avatar instanceof File) {
+      const objectUrl = URL.createObjectURL(avatar);
+      setAvatarPreview(objectUrl);
 
-    return () => URL.revokeObjectURL(objectUrl); // pulizia
-  } else if (typeof avatar === 'string') {
-    setAvatarPreview(avatar);
-  }
-}, [avatar]);
+      return () => URL.revokeObjectURL(objectUrl); // pulizia
+    } else if (typeof avatar === 'string') {
+      setAvatarPreview(avatar);
+    }
+  }, [avatar]);
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -109,19 +112,24 @@ useEffect(() => {
 
 const handleUpdateProfile = async (e) => {
   e.preventDefault();
-  try {
-    if (!name.trim()) {
-  addToast('Il nome non può essere vuoto.', 'error');
-  return;
-}
 
+  const trimmedName = name.trim();
+  if (!nameRegex.test(trimmedName)) {
+    addToast('Il nome può contenere solo lettere e numeri.', 'error');
+    return;
+  }
+  if (trimmedName.length < 3) {
+    addToast('Il nome deve contenere almeno 3 caratteri.', 'error');
+    return;
+  }
+
+  try {
     const formData = new FormData();
-    formData.append('name', name);
+    formData.append('name', trimmedName);
     if (avatar instanceof File) {
       formData.append('avatar', avatar);
     }
 
-    console.log(avatar)
     const { data } = await api.put(`/user/${user._id}`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -134,17 +142,19 @@ const handleUpdateProfile = async (e) => {
     addToast("Errore nell'aggiornamento del profilo", 'error');
   }
 };
+
+
   const handleChangeEmail = async (e) => {
     e.preventDefault();
     setEmailError('');
-    if (!newEmail.includes('@')) {
-      setEmailError('Inserisci un’email valida.');
-      return;
-    }
-    if (newEmail !== confirmNewEmail) {
-  setEmailError('Le email non coincidono.');
+if (!emailRegex.test(newEmail.trim())) {
+  setEmailError('Inserisci un indirizzo email valido.');
   return;
 }
+    if (newEmail !== confirmNewEmail) {
+      setEmailError('Le email non coincidono.');
+      return;
+    }
     try {
       const { data } = await api.post('/api/v1/change-email', {
         newEmail,
@@ -154,13 +164,13 @@ const handleUpdateProfile = async (e) => {
       addToast('Email cambiata! Controlla la casella per conferma.', 'success');
       setNewEmail('');
       setPasswordForEmail('');
-if (data.forceLogout) {
-      await api.post('/api/v1/logout', null, { withCredentials: true });
-  dispatch(logoutUser());
-    localStorage.removeItem('token');
+      if (data.forceLogout) {
+        await api.post('/api/v1/logout', null, { withCredentials: true });
+        dispatch(logoutUser());
+        localStorage.removeItem('token');
 
-  navigate('/verify-email', { state: { email: newEmail } });
-}
+        navigate('/verify-email', { state: { email: newEmail } });
+      }
     } catch (err) {
       setEmailError(err.response?.data?.message || 'Errore nel cambio email');
       addToast('Impossibile cambiare email.', 'error');
@@ -170,10 +180,10 @@ if (data.forceLogout) {
   const handleChangePassword = async (e) => {
     e.preventDefault();
     setPasswordError('');
-    if (newPassword.length < 8) {
-      setPasswordError('La password deve avere almeno 8 caratteri.');
-      return;
-    }
+if (!passwordRegex.test(newPassword)) {
+  setPasswordError('La password deve avere almeno 8 caratteri, una lettera maiuscola, un numero e un carattere speciale.');
+  return;
+}
     if (newPassword !== confirmPassword) {
       setPasswordError('Le password non corrispondono.');
       return;
@@ -230,7 +240,7 @@ if (data.forceLogout) {
           </div>
 
           <div className="text-center">
-            <img src={avatarPreview  || 'https://via.placeholder.com/150'} alt="Avatar" className="w-24 h-24 rounded-full mx-auto border-4 border-[#FFD700]" />
+            <img src={avatarPreview || 'https://via.placeholder.com/150'} alt="Avatar" className="w-24 h-24 rounded-full mx-auto border-4 border-[#FFD700]" />
             <h3 className="mt-2 text-lg font-medium">{name}</h3>
             <p className="text-sm text-gray-500">{email}</p>
           </div>
@@ -247,15 +257,15 @@ if (data.forceLogout) {
                 className="w-full border rounded px-3 py-2 mt-1 bg-white text-black"
               />
             </div>
-<div>
-  <label className="block text-sm font-medium">Carica Avatar (immagine)</label>
-  <input
-    type="file"
-    accept="image/*"
-    onChange={(e) => setAvatar(e.target.files[0])}
-    className="w-full border rounded px-3 py-2 mt-1 bg-white text-black"
-  />
-</div>            <button type="submit" className="w-full bg-[#228B22] text-white py-2 rounded hover:bg-green-700">
+            <div>
+              <label className="block text-sm font-medium">Carica Avatar (immagine)</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setAvatar(e.target.files[0])}
+                className="w-full border rounded px-3 py-2 mt-1 bg-white text-black"
+              />
+            </div>            <button type="submit" className="w-full bg-[#228B22] text-white py-2 rounded hover:bg-green-700">
               Aggiorna Profilo
             </button>
           </form>
@@ -274,15 +284,15 @@ if (data.forceLogout) {
                   onChange={(e) => setNewEmail(e.target.value)}
                   className="w-full border rounded px-3 py-2 mt-1 bg-white text-black"
                 />
-<div>
-  <label className="block text-sm font-medium">Conferma Nuova Email</label>
-  <input
-    type="email"
-    value={confirmNewEmail}
-    onChange={(e) => setConfirmNewEmail(e.target.value)}
-    className="w-full border rounded px-3 py-2 mt-1 bg-white text-black"
-  />
-</div>
+                <div>
+                  <label className="block text-sm font-medium">Conferma Nuova Email</label>
+                  <input
+                    type="email"
+                    value={confirmNewEmail}
+                    onChange={(e) => setConfirmNewEmail(e.target.value)}
+                    className="w-full border rounded px-3 py-2 mt-1 bg-white text-black"
+                  />
+                </div>
                 {emailError && <p className="text-sm text-red-600 mt-1">{emailError}</p>}
               </div>
               <div>
@@ -376,15 +386,15 @@ if (data.forceLogout) {
         </div>
       </div>
 
-      <ConfirmModal 
+      <ConfirmModal
         show={showDeleteModal}
-  title={<span className="text-black">Conferma eliminazione</span>}
-          message="Sei sicuro di voler eliminare definitivamente il tuo account?"
+        title={<span className="text-black">Conferma eliminazione</span>}
+        message="Sei sicuro di voler eliminare definitivamente il tuo account?"
         onConfirm={() => {
           setShowDeleteModal(false);
           confirmDeleteAccount();
         }}
-        onCancel={() => setShowDeleteModal(false)} 
+        onCancel={() => setShowDeleteModal(false)}
       />
     </div>
   );

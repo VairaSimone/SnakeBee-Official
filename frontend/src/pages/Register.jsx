@@ -15,8 +15,7 @@ const Register = () => {
     e.preventDefault();
     setErrorMessage('');
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
 const nameRegex = /^[a-zA-Z0-9]{2,}$/;
     if (!nameRegex.test(name.trim())) {
       setErrorMessage('Il nome può contenere solo lettere e numeri.');
@@ -33,7 +32,7 @@ const nameRegex = /^[a-zA-Z0-9]{2,}$/;
     }
 
     if (!passwordRegex.test(password)) {
-      setErrorMessage('La password deve avere almeno 8 caratteri, una lettera maiuscola e un numero.');
+setErrorMessage('La password deve avere almeno 8 caratteri, una lettera maiuscola, un numero e un carattere speciale.');
       return;
     }
 
