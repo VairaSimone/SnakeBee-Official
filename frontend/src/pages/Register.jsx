@@ -14,6 +14,7 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage('');
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
 const nameRegex = /^[a-zA-Z0-9]{2,}$/;
