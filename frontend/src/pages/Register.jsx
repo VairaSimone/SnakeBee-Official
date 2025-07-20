@@ -17,7 +17,11 @@ const Register = () => {
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
-
+    const nameRegex = /^[a-zA-ZàèéìòùÀÈÉÌÒÙ' ]{2,}$/;
+    if (!nameRegex.test(name.trim())) {
+      setErrorMessage('Il nome può contenere solo lettere, spazi e apostrofi.');
+      return;
+    }
     if (name.trim().length < 2) {
       setErrorMessage('Il nome deve contenere almeno 2 caratteri.');
       return;
@@ -48,8 +52,12 @@ const Register = () => {
       navigate(`/verify-email?email=${encodeURIComponent(email)}`);
     } catch (err) {
       console.error('Errore durante la registrazione:', err);
-      if (err.response?.data?.message) {
-        setErrorMessage(err.response.data.message);
+      const serverMessage = err.response?.data?.message || '';
+
+      if (serverMessage.includes('alpha-numeric')) {
+        setErrorMessage('Il nome può contenere solo lettere e numeri, niente caratteri speciali.');
+      } else if (serverMessage) {
+        setErrorMessage(serverMessage);
       } else {
         setErrorMessage('Errore sconosciuto. Riprova più tardi.');
       }

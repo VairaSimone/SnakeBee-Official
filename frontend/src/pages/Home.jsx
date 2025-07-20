@@ -39,7 +39,7 @@ const Home = () => {
             <li>📋 <strong>Gestione rettili:</strong> peso, alimentazione, interventi e molto altro.</li>
             <li>🧠 <strong>Consulenza:</strong> supporto su alimentazione e riproduzione.</li>
             <li>🛠 <strong>Supporto tecnico:</strong> assistenza per l’uso della piattaforma e nuove funzionalità.</li>
-            <li>🐍 <strong>Riproduzione:</strong> organizza accoppiamenti, incubazione e cuccioli.</li>
+            <li>🐍 <strong>Riproduzione:</strong> organizza accoppiamenti, incubazione e baby.</li>
           </ul>
         </section>
 

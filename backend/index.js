@@ -18,7 +18,6 @@ import forum from './routes/Forum.router.js';
 import googleStrategy from './config/Passport.config.js ';
 import './config/RetryFailedEmails.js';
 import cloudinaryRouter from './routes/Cloudinary.router.js';
-
 const port = process.env.PORT
 const app = express();
 const corsOptions = {
@@ -27,6 +26,7 @@ const corsOptions = {
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
 };
+app.set('trust proxy', 1);
 
 const allowedOrigins = [process.env.FRONTEND_URL, 'https://app.reptile.io', 'https://beta.reptile.io'];
 
