@@ -19,11 +19,11 @@ const Register = () => {
     const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
 const nameRegex = /^[a-zA-Z0-9]{2,}$/;
     if (!nameRegex.test(name.trim())) {
-      setErrorMessage('Il nome può contenere solo lettere, spazi e apostrofi.');
+      setErrorMessage('Il nome può contenere solo lettere e numeri.');
       return;
     }
-    if (name.trim().length < 2) {
-      setErrorMessage('Il nome deve contenere almeno 2 caratteri.');
+    if (name.trim().length <= 3) {
+      setErrorMessage('Il nome deve contenere almeno 3 caratteri.');
       return;
     }
 
