@@ -23,7 +23,7 @@ const nameRegex = /^[a-zA-Z0-9]{2,}$/;
       return;
     }
     if (name.trim().length < 3) {
-      setErrorMessage('Il nome deve contenere almeno 3 caratteri.');
+      setErrorMessage('Il nome deve contenere almeno 4 caratteri.');
       return;
     }
 
