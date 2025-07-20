@@ -22,7 +22,7 @@ const nameRegex = /^[a-zA-Z0-9]{2,}$/;
       setErrorMessage('Il nome può contenere solo lettere e numeri.');
       return;
     }
-    if (name.trim().length <= 3) {
+    if (name.trim().length < 3) {
       setErrorMessage('Il nome deve contenere almeno 3 caratteri.');
       return;
     }
