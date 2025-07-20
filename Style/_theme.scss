@@ -1,0 +1,22 @@
+// palette
+$brand-primary:   #228B22; // verde bosco
+$brand-secondary: #556B2F; // oliva scuro
+$brand-success:   #FFD700; // miele
+$body-bg:         #FAF3E0; // beige
+$body-color:      #2B2B2B; // testo quasi nero
+$danger:          #CC3300; // rosso mattone
+
+// import di Bootstrap e override variabili
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
+
+// ora sovrascrivi
+$primary: $brand-primary !default;
+$secondary: $brand-secondary !default;
+$success: $brand-success !default;
+$body-bg: $body-bg !default;
+$body-color: $body-color !default;
+$danger: $danger !default;
+
+@import "~bootstrap/scss/bootstrap";

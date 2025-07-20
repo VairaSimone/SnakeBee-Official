@@ -1,0 +1,83 @@
+.navbar-custom {
+  background: linear-gradient(45deg, #2f3640);
+  border-bottom: 2px solid #FFD700;
+  padding: 10px 20px;
+}
+
+.navbar-brand {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #FFD700;
+  transition: color 0.3s ease;
+}
+
+.navbar-brand:hover {
+  color: #FFC107;
+}
+
+.nav-link {
+  color: #fff;
+  font-size: 1.1rem;
+  margin-right: 15px;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #FFD700;
+}
+
+.notification-btn {
+  position: relative;
+  background-color: transparent;
+  border: none;
+  color: #FFD700;
+  transition: color 0.3s ease;
+}
+
+.notification-btn:hover {
+  color: #FFC107;
+}
+
+.notification-badge {
+  position: absolute;
+  top: 0;
+  right: -5px;
+  font-size: 0.9rem;
+}
+
+.user-dropdown {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.user-avatar {
+  border: 2px solid #FFD700;
+  transition: transform 0.2s ease, border-color 0.3s ease;
+}
+
+.user-avatar:hover {
+  transform: scale(1.05);
+  border-color: #FFC107;
+}
+
+.dropdown-menu {
+  background-color: #2f3640;
+  border: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.dropdown-item {
+  color: #FFD700;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background-color: #FFC107;
+  color: black;
+}
+.navbar-custom {
+  background-color: var(--bs-primary);
+  .nav-link, .navbar-brand { color: #FAF3E0; }
+  .nav-link:hover { color: var(--bs-success); }
+}

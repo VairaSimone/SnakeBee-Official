@@ -1,0 +1,68 @@
+.modal-header-custom {
+  background-color: #42a5f5;
+  color: white;
+}
+
+.modal-title-custom {
+  font-size: 1.6rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.input-custom {
+  margin-bottom: 1rem;
+}
+
+.btn-custom {
+  margin-top: 1rem;
+  width: 100%;
+}
+
+.btn-delete-custom {
+  background-color: #e53935;
+  border: none;
+  color: white;
+  padding: 0.4rem 1rem;
+  transition: transform 0.3s ease;
+}
+
+.btn-delete-custom:hover {
+  background-color: #d32f2f;
+  transform: scale(1.05);
+}
+
+.table-wrapper {
+  max-height: 300px;
+  overflow-y: auto; 
+  overflow-x: hidden;
+  margin-top: 1rem;
+}
+
+.table-custom {
+  font-size: 0.9rem;
+  text-align: center;
+  table-layout: fixed; 
+  width: 100%;
+}
+
+.table-custom th,
+.table-custom td {
+  vertical-align: middle;
+  white-space: nowrap; 
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+}
+
+.pagination {
+  justify-content: center;
+}
+
+.modal-body {
+  padding: 2rem;
+}
+
+@media (max-width: 768px) {
+  .btn-custom {
+    width: 100%;
+  }
+}

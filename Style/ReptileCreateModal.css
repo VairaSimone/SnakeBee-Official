@@ -1,0 +1,37 @@
+.modal-header-custom {
+  background-color: #4caf50;
+  color: white;
+  border-bottom: none;
+}
+
+.modal-title-custom {
+  font-size: 1.6rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.input-custom {
+  margin-bottom: 1rem;
+}
+
+.btn-custom {
+  margin-top: 1rem;
+}
+
+.btn-save-custom {
+  background-color: #1e88e5;
+  border: none;
+  transition: transform 0.3s ease;
+  padding: 0.75rem 1.5rem;
+  border-radius: 50px;
+  font-size: 1.2rem;
+}
+
+.btn-save-custom:hover {
+  transform: scale(1.05);
+  background-color: #1565c0;
+}
+
+.modal-body {
+  padding: 2rem;
+}

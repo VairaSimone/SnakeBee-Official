@@ -1,0 +1,11 @@
+Cose da sistemare:
+
+
+CreateReptile
+- data di nascita, data crescita e date di salute, cliccando sopra non appare il quadratino con il calendario. appare se clicchi nel bianco tutto a destra, ma non va bene
+
+EditReptile
+- data di nascita cliccando sopra non appare il quadratino con il calendario. appare se clicchi nel bianco tutto a destra, ma non va bene
+
+Feeding
+- nella data cliccando sopra non appare il quadratino con il calendario. appare se clicchi nel bianco tutto a destra, ma non va bene
