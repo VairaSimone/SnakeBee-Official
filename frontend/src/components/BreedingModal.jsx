@@ -74,7 +74,7 @@ const [saveSuccess, setSaveSuccess] = useState(false);
     return () => sub.unsubscribe();
   }, [watch, setValue]);
 
-  // Carico i rettili quando apro il modal
+  // Carico i rettili quando apro il moda
   useEffect(() => {
     if (show) {
       setLoading(true);
