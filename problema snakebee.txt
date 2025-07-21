@@ -12,5 +12,42 @@ Feeding
 
 
 
-mettere che può scaricare un pdf o excel
-cambiare imagine di preview rettili
+7. Sistema di badge o achievement
+Premia l’utente con badge tipo “Amante dei rettili”, “Esperto di serpenti”, “Donatore SnakeBee”, ecc.
+
+Mostrali in dashboard o profilo.
+19. 🧩 Modalità “Zookeeper” (Gamification soft)
+Ogni sezione visitata ti dà un badge. Dopo X badge → messaggio:
+
+“Complimenti! Sei un Rettilologo in erba 🌿”
+28. 🪙 Sistema di Karma
+Ogni azione dell’utente (login, inserimento dati, lettura tips) ti dà punti:
+
+“+3 karma rettiliano 🦎”
+
+Poi puoi mostrare livelli:
+
+🐣 Neofita
+
+🦗 Insettivoro
+
+🐍 Ofidologo
+
+🦎 Maestro Terrarista
+
+29. 🤫 Easter Egg nascosti
+Ad esempio:
+
+Premi 5 volte il logo SnakeBee → suona un sibilo o appare un “Serpente dorato”
+
+Scrivi :python: in un input → trasforma il campo in una skin a squame
+
+11. 🎯 Quiz casuale nel footer
+Ogni tot minuti o alla visita di certe pagine, mostra una domandina trivia tipo:
+
+"Qual è la differenza tra un boa e un pitone?"
+[ ] I colori
+[ ] Le scaglie
+[x] Il modo in cui uccidono la preda
+
+Aggiungi reazioni simpatiche in base alla risposta ("Bravo, rettile saggio!", "Oops, torna a leggere su Wikipedia 🐢")

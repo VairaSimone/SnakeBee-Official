@@ -90,7 +90,7 @@ export const login = async (req, res, next) => {
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: true,
-      sameSite: 'lax',
+      sameSite: 'None',
       path: '/',
 
       maxAge: 7 * 24 * 60 * 60 * 1000
@@ -205,7 +205,7 @@ export const logout = async (req, res, next) => {
 
     res.clearCookie('refreshToken', {
       httpOnly: true,
-      sameSite: 'lax',
+      sameSite: 'None',
       secure: true
     });
 
@@ -256,7 +256,7 @@ export const callBackGoogle = async (req, res, next) => {
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: true,
-      sameSite: 'lax',
+      sameSite: 'None',
       path: '/',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
@@ -442,7 +442,7 @@ export const changeEmailAndResendVerification = async (req, res, next) => {
     await user.save();
     res.clearCookie('refreshToken', {
       httpOnly: true,
-      sameSite: 'lax',
+      sameSite: 'None',
       secure: true,
     });
     await sendVerificationEmail(newEmail, code);
