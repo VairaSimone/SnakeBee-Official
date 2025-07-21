@@ -10,14 +10,23 @@ const Register = () => {
   const [confirmPassword, setConfigPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
+  const [privacyConsent, setPrivacyConsent] = useState(false);
+  const [privacyConsentGoogle, setPrivacyConsentGoogle] = useState(false);
+  const [googleError, setGoogleError] = useState('');
+    const handleGoogleLogin = () => {
+      if (!privacyConsentGoogle) {
+        setGoogleError('Devi accettare la Privacy Policy per registrarti con Google.');
+        return;
+      }
+      window.location.href = `${process.env.REACT_APP_BACKEND_URL}/api/v1/login-google`;
+    };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage('');
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
-const nameRegex = /^[a-zA-Z0-9]{2,}$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+    const nameRegex = /^[a-zA-Z0-9]{2,}$/;
     if (!nameRegex.test(name.trim())) {
       setErrorMessage('Il nome può contenere solo lettere e numeri.');
       return;
@@ -33,7 +42,7 @@ const nameRegex = /^[a-zA-Z0-9]{2,}$/;
     }
 
     if (!passwordRegex.test(password)) {
-setErrorMessage('La password deve avere almeno 8 caratteri, una lettera maiuscola, un numero e un carattere speciale.');
+      setErrorMessage('La password deve avere almeno 8 caratteri, una lettera maiuscola, un numero e un carattere speciale.');
       return;
     }
 
@@ -48,6 +57,7 @@ setErrorMessage('La password deve avere almeno 8 caratteri, una lettera maiuscol
         email,
         password,
         confirmPassword,
+        privacyConsent: true
       });
       navigate(`/verify-email?email=${encodeURIComponent(email)}`);
     } catch (err) {
@@ -64,9 +74,6 @@ setErrorMessage('La password deve avere almeno 8 caratteri, una lettera maiuscol
     }
   };
 
-  const handleGoogleLogin = () => {
-    window.location.href = `${process.env.REACT_APP_BACKEND_URL}/api/v1/login-google`;
-  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#FAF3E0] px-4">
@@ -127,6 +134,18 @@ setErrorMessage('La password deve avere almeno 8 caratteri, una lettera maiuscol
               required
             />
           </div>
+          <div className="flex items-center gap-2 mt-2">
+            <input
+              type="checkbox"
+              id="privacyConsent"
+              checked={privacyConsent}
+              onChange={() => setPrivacyConsent(!privacyConsent)}
+              required
+            />
+            <label htmlFor="privacyConsent" className="text-sm text-[#2B2B2B]">
+              Accetto il trattamento dei dati personali secondo la <Link to="/privacy-policy" className="text-blue-600 underline">Privacy Policy</Link>.
+            </label>
+          </div>
 
           <button
             type="submit"
@@ -147,8 +166,24 @@ setErrorMessage('La password deve avere almeno 8 caratteri, una lettera maiuscol
           <span className="w-6 h-6 bg-white border border-gray-300 rounded-full flex items-center justify-center">
             <FaGoogle className="text-red-500 text-sm" />
           </span>
+
           <span className="text-sm text-[#2B2B2B] font-medium">Registrati con Google</span>
         </button>
+        <div className="flex items-center gap-2 mt-2 mb-2">
+          <input
+            type="checkbox"
+            id="privacyConsentGoogle"
+            checked={privacyConsentGoogle}
+            onChange={() => {
+              setPrivacyConsentGoogle(!privacyConsentGoogle);
+              setGoogleError('');
+            }}
+          />
+          <label htmlFor="privacyConsentGoogle" className="text-sm text-[#2B2B2B]">
+            Accetto il trattamento dei dati personali secondo la <Link to="/privacy-policy" className="text-blue-600 underline">Privacy Policy</Link>.
+          </label>
+        </div>
+        {googleError && <p className="text-red-600 text-sm">{googleError}</p>}
 
         <p className="mt-6 text-sm text-center text-gray-700">
           Hai già un account?{' '}

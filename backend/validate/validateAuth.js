@@ -13,7 +13,8 @@ export const signupSchema = Joi.object({
   password: passwordValidation,
   confirmPassword: Joi.string().valid(Joi.ref('password')).required()
     .messages({ 'any.only': 'La conferma della password non corrisponde' }),
-  avatar: Joi.string()
+  avatar: Joi.string(),
+  privacyConsent: Joi.boolean().valid(true).required()
 
 });
 

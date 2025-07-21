@@ -50,7 +50,7 @@ eventSchema.path('date').validate(function(value) {
     'birth': 'incubationEnd'
   };
   const prev = prevTypes[this.type];
-  if (!prev) return true; // pairing libero
+  if (!prev) return true; 
   // cerca evento precedente
   const prevEvt = this.ownerDocument().events.find(e => e.type === prev);
   return prevEvt && value >= prevEvt.date;

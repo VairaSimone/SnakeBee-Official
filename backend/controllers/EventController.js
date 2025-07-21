@@ -1,4 +1,3 @@
-// controllers/EventController.js
 import Event from '../models/Event.js';
 
 // GET /events/:reptileId

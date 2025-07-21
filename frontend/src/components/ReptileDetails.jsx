@@ -32,7 +32,6 @@ const ReptileDetails = () => {
         // Alimentazione
         const { data: feedingData } = await api.get(`/feedings/${reptileId}?page=1`);
         setFeedings(feedingData.dati || []);
-        console.log(feedingData.dati)
         // Riproduzione (nuovo endpoint specifico)
         const { data: breedingData } = await api.get(`/breeding/reptile/${reptileId}`);
         setBreeding(breedingData || []);
@@ -136,72 +135,72 @@ const ReptileDetails = () => {
             )}
 
 
-<div>
-  <h3 className="text-xl font-semibold mb-2 border-b border-gray-300 pb-1">📅 Eventi</h3>
+            <div>
+              <h3 className="text-xl font-semibold mb-2 border-b border-gray-300 pb-1">📅 Eventi</h3>
 
-  {/* Muta */}
-  <div className="mb-6">
-    <h4 className="text-lg font-bold text-[#228B22] mb-2">Muta</h4>
-    {events.filter(e => e.type === 'shed').slice(0, visibleShed).map(ev => (
-      <div key={ev._id} className="bg-[#EDE7D6] p-3 rounded shadow-sm mb-2">
-        <p><strong>Data:</strong> {new Date(ev.date).toLocaleDateString()}</p>
-        {ev.notes && <p><strong>Note:</strong> {ev.notes}</p>}
-      </div>
-    ))}
-    {events.filter(e => e.type === 'shed').length > 5 && (
-      <div className="space-x-2">
-        {visibleShed < events.filter(e => e.type === 'shed').length && (
-          <button onClick={() => setVisibleShed(visibleShed + 5)} className="btn-sm bg-green-600 text-white px-3 py-1 rounded">Carica altri</button>
-        )}
-        {visibleShed > 5 && (
-          <button onClick={() => setVisibleShed(5)} className="btn-sm bg-gray-600 text-white px-3 py-1 rounded">Mostra meno</button>
-        )}
-      </div>
-    )}
-  </div>
+              {/* Muta */}
+              <div className="mb-6">
+                <h4 className="text-lg font-bold text-[#228B22] mb-2">Muta</h4>
+                {events.filter(e => e.type === 'shed').slice(0, visibleShed).map(ev => (
+                  <div key={ev._id} className="bg-[#EDE7D6] p-3 rounded shadow-sm mb-2">
+                    <p><strong>Data:</strong> {new Date(ev.date).toLocaleDateString()}</p>
+                    {ev.notes && <p><strong>Note:</strong> {ev.notes}</p>}
+                  </div>
+                ))}
+                {events.filter(e => e.type === 'shed').length > 5 && (
+                  <div className="space-x-2">
+                    {visibleShed < events.filter(e => e.type === 'shed').length && (
+                      <button onClick={() => setVisibleShed(visibleShed + 5)} className="btn-sm bg-green-600 text-white px-3 py-1 rounded">Carica altri</button>
+                    )}
+                    {visibleShed > 5 && (
+                      <button onClick={() => setVisibleShed(5)} className="btn-sm bg-gray-600 text-white px-3 py-1 rounded">Mostra meno</button>
+                    )}
+                  </div>
+                )}
+              </div>
 
-  {/* Feci */}
-  <div className="mb-6">
-    <h4 className="text-lg font-bold text-[#228B22] mb-2">Feci</h4>
-    {events.filter(e => e.type === 'feces').slice(0, visibleFeces).map(ev => (
-      <div key={ev._id} className="bg-[#EDE7D6] p-3 rounded shadow-sm mb-2">
-        <p><strong>Data:</strong> {new Date(ev.date).toLocaleDateString()}</p>
-        {ev.notes && <p><strong>Note:</strong> {ev.notes}</p>}
-      </div>
-    ))}
-    {events.filter(e => e.type === 'feces').length > 5 && (
-      <div className="space-x-2">
-        {visibleFeces < events.filter(e => e.type === 'feces').length && (
-          <button onClick={() => setVisibleFeces(visibleFeces + 5)} className="btn-sm bg-green-600 text-white px-3 py-1 rounded">Carica altri</button>
-        )}
-        {visibleFeces > 5 && (
-          <button onClick={() => setVisibleFeces(5)} className="btn-sm bg-gray-600 text-white px-3 py-1 rounded">Mostra meno</button>
-        )}
-      </div>
-    )}
-  </div>
+              {/* Feci */}
+              <div className="mb-6">
+                <h4 className="text-lg font-bold text-[#228B22] mb-2">Feci</h4>
+                {events.filter(e => e.type === 'feces').slice(0, visibleFeces).map(ev => (
+                  <div key={ev._id} className="bg-[#EDE7D6] p-3 rounded shadow-sm mb-2">
+                    <p><strong>Data:</strong> {new Date(ev.date).toLocaleDateString()}</p>
+                    {ev.notes && <p><strong>Note:</strong> {ev.notes}</p>}
+                  </div>
+                ))}
+                {events.filter(e => e.type === 'feces').length > 5 && (
+                  <div className="space-x-2">
+                    {visibleFeces < events.filter(e => e.type === 'feces').length && (
+                      <button onClick={() => setVisibleFeces(visibleFeces + 5)} className="btn-sm bg-green-600 text-white px-3 py-1 rounded">Carica altri</button>
+                    )}
+                    {visibleFeces > 5 && (
+                      <button onClick={() => setVisibleFeces(5)} className="btn-sm bg-gray-600 text-white px-3 py-1 rounded">Mostra meno</button>
+                    )}
+                  </div>
+                )}
+              </div>
 
-  {/* Visita veterinaria */}
-  <div className="mb-6">
-    <h4 className="text-lg font-bold text-[#228B22] mb-2">Visita Veterinaria</h4>
-    {events.filter(e => e.type === 'vet').slice(0, visibleVet).map(ev => (
-      <div key={ev._id} className="bg-[#EDE7D6] p-3 rounded shadow-sm mb-2">
-        <p><strong>Data:</strong> {new Date(ev.date).toLocaleDateString()}</p>
-        {ev.notes && <p><strong>Note:</strong> {ev.notes}</p>}
-      </div>
-    ))}
-    {events.filter(e => e.type === 'vet').length > 5 && (
-      <div className="space-x-2">
-        {visibleVet < events.filter(e => e.type === 'vet').length && (
-          <button onClick={() => setVisibleVet(visibleVet + 5)} className="btn-sm bg-green-600 text-white px-3 py-1 rounded">Carica altri</button>
-        )}
-        {visibleVet > 5 && (
-          <button onClick={() => setVisibleVet(5)} className="btn-sm bg-gray-600 text-white px-3 py-1 rounded">Mostra meno</button>
-        )}
-      </div>
-    )}
-  </div>
-</div>
+              {/* Visita veterinaria */}
+              <div className="mb-6">
+                <h4 className="text-lg font-bold text-[#228B22] mb-2">Visita Veterinaria</h4>
+                {events.filter(e => e.type === 'vet').slice(0, visibleVet).map(ev => (
+                  <div key={ev._id} className="bg-[#EDE7D6] p-3 rounded shadow-sm mb-2">
+                    <p><strong>Data:</strong> {new Date(ev.date).toLocaleDateString()}</p>
+                    {ev.notes && <p><strong>Note:</strong> {ev.notes}</p>}
+                  </div>
+                ))}
+                {events.filter(e => e.type === 'vet').length > 5 && (
+                  <div className="space-x-2">
+                    {visibleVet < events.filter(e => e.type === 'vet').length && (
+                      <button onClick={() => setVisibleVet(visibleVet + 5)} className="btn-sm bg-green-600 text-white px-3 py-1 rounded">Carica altri</button>
+                    )}
+                    {visibleVet > 5 && (
+                      <button onClick={() => setVisibleVet(5)} className="btn-sm bg-gray-600 text-white px-3 py-1 rounded">Mostra meno</button>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
 
             <div>
             </div>

@@ -89,7 +89,7 @@ const UserProfile = () => {
       const objectUrl = URL.createObjectURL(avatar);
       setAvatarPreview(objectUrl);
 
-      return () => URL.revokeObjectURL(objectUrl); // pulizia
+      return () => URL.revokeObjectURL(objectUrl);
     } else if (typeof avatar === 'string') {
       setAvatarPreview(avatar);
     }
@@ -110,47 +110,47 @@ const UserProfile = () => {
     fetchUser();
   }, []);
 
-const handleUpdateProfile = async (e) => {
-  e.preventDefault();
+  const handleUpdateProfile = async (e) => {
+    e.preventDefault();
 
-  const trimmedName = name.trim();
-  if (!nameRegex.test(trimmedName)) {
-    addToast('Il nome può contenere solo lettere e numeri.', 'error');
-    return;
-  }
-  if (trimmedName.length < 3) {
-    addToast('Il nome deve contenere almeno 3 caratteri.', 'error');
-    return;
-  }
-
-  try {
-    const formData = new FormData();
-    formData.append('name', trimmedName);
-    if (avatar instanceof File) {
-      formData.append('avatar', avatar);
+    const trimmedName = name.trim();
+    if (!nameRegex.test(trimmedName)) {
+      addToast('Il nome può contenere solo lettere e numeri.', 'error');
+      return;
+    }
+    if (trimmedName.length < 3) {
+      addToast('Il nome deve contenere almeno 3 caratteri.', 'error');
+      return;
     }
 
-    const { data } = await api.put(`/user/${user._id}`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    try {
+      const formData = new FormData();
+      formData.append('name', trimmedName);
+      if (avatar instanceof File) {
+        formData.append('avatar', avatar);
+      }
 
-    setUser(data);
-    addToast('Profilo aggiornato con successo!', 'success');
-  } catch {
-    addToast("Errore nell'aggiornamento del profilo", 'error');
-  }
-};
+      const { data } = await api.put(`/user/${user._id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      setUser(data);
+      addToast('Profilo aggiornato con successo!', 'success');
+    } catch {
+      addToast("Errore nell'aggiornamento del profilo", 'error');
+    }
+  };
 
 
   const handleChangeEmail = async (e) => {
     e.preventDefault();
     setEmailError('');
-if (!emailRegex.test(newEmail.trim())) {
-  setEmailError('Inserisci un indirizzo email valido.');
-  return;
-}
+    if (!emailRegex.test(newEmail.trim())) {
+      setEmailError('Inserisci un indirizzo email valido.');
+      return;
+    }
     if (newEmail !== confirmNewEmail) {
       setEmailError('Le email non coincidono.');
       return;
@@ -180,10 +180,10 @@ if (!emailRegex.test(newEmail.trim())) {
   const handleChangePassword = async (e) => {
     e.preventDefault();
     setPasswordError('');
-if (!passwordRegex.test(newPassword)) {
-  setPasswordError('La password deve avere almeno 8 caratteri, una lettera maiuscola, un numero e un carattere speciale.');
-  return;
-}
+    if (!passwordRegex.test(newPassword)) {
+      setPasswordError('La password deve avere almeno 8 caratteri, una lettera maiuscola, un numero e un carattere speciale.');
+      return;
+    }
     if (newPassword !== confirmPassword) {
       setPasswordError('Le password non corrispondono.');
       return;
@@ -224,27 +224,27 @@ if (!passwordRegex.test(newPassword)) {
       setNotificationMsg('Errore aggiornamento.');
       addToast('Errore nelle preferenze.', 'error');
     }
-  };const handleExportExcel = async () => {
-  try {
-    const response = await api.get(`reptile/export/reptiles/${user._id}`, {
-      responseType: 'blob', // Fondamentale per gestire i file binari!
-    });
+  }; const handleExportExcel = async () => {
+    try {
+      const response = await api.get(`reptile/export/reptiles/${user._id}`, {
+        responseType: 'blob',
+      });
 
-    // Crea un link temporaneo per il download
-    const url = window.URL.createObjectURL(new Blob([response.data]));
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', 'reptile_data.xlsx');
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
+      // Crea un link temporaneo per il download
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'reptile_data.xlsx');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
 
-    addToast('Download avviato con successo!');
-  } catch (err) {
-    console.error(err);
-    addToast('Errore durante il download del file.', 'error');
-  }
-};
+      addToast('Download avviato con successo!');
+    } catch (err) {
+      console.error(err);
+      addToast('Errore durante il download del file.', 'error');
+    }
+  };
 
 
   if (!user) return <div className="text-center mt-10">Caricamento profilo...</div>;
@@ -392,19 +392,19 @@ if (!passwordRegex.test(newPassword)) {
           </div>
 
           <hr className="border-t" />
-{/* Esporta dati in Excel */}
-<div>
-  <h3 className="text-xl font-semibold text-[#2B2B2B]">Esporta i tuoi dati</h3>
-  <p className="text-sm text-gray-500 mb-2">
-    Scarica un file Excel con tutti i dati dei tuoi rettili, alimentazioni, eventi e riproduzioni.
-  </p>
-  <button
-    onClick={handleExportExcel}
-    className="bg-[#1E90FF] text-white px-4 py-2 rounded hover:bg-blue-700"
-  >
-    Scarica Excel
-  </button>
-</div>
+          {/* Esporta dati in Excel */}
+          <div>
+            <h3 className="text-xl font-semibold text-[#2B2B2B]">Esporta i tuoi dati</h3>
+            <p className="text-sm text-gray-500 mb-2">
+              Scarica un file Excel con tutti i dati dei tuoi rettili, alimentazioni, eventi e riproduzioni.
+            </p>
+            <button
+              onClick={handleExportExcel}
+              className="bg-[#1E90FF] text-white px-4 py-2 rounded hover:bg-blue-700"
+            >
+              Scarica Excel
+            </button>
+          </div>
           <hr className="border-t" />
 
           {/* Elimina account */}

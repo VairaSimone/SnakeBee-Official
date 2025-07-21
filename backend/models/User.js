@@ -71,7 +71,15 @@ const userSchema = new Schema(
   type: Boolean,
   default: true
 },
-        createdAt: {
+privacyConsent: {
+  accepted: {
+    type: Boolean,
+    default: false
+  },
+  timestamp: {
+    type: Date
+  }
+},        createdAt: {
             type: Date,
             default: Date.now
         },

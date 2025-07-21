@@ -7,47 +7,47 @@ import Breeding from '../models/Breeding.js';
 
 import RevokedToken from "../models/RevokedToken.js";
 import jwt from "jsonwebtoken";
-import cloudinary from '../config/CloudinaryConfig.js'; // Assicurati che questo sia l'import giusto
+import cloudinary from '../config/CloudinaryConfig.js'; 
 
 export const GetAllUser = async (req, res) => {
-    try {
+  try {
 
-        const page = parseInt(req.query.page) || 1;
-        const perPage = parseInt(req.query.perPage) || 20;
+    const page = parseInt(req.query.page) || 1;
+    const perPage = parseInt(req.query.perPage) || 20;
 
-        const user = await User.find({})
-            .sort({ name: 1 })
-            .skip((page - 1) * perPage)
-            .limit(perPage).select('-password -verificationCode -resetPasswordCode -refreshTokens -lastPasswordResetEmailSentAt -resetPasswordExpires -accountLockedUntil -loginAttempts'); if (!user) return res.status(404).json({ message: 'User not found' });
-;
+    const user = await User.find({})
+      .sort({ name: 1 })
+      .skip((page - 1) * perPage)
+      .limit(perPage).select('-password -verificationCode -resetPasswordCode -refreshTokens -lastPasswordResetEmailSentAt -resetPasswordExpires -accountLockedUntil -loginAttempts'); if (!user) return res.status(404).json({ message: 'User not found' });
+    ;
 
-        const totalResults = await User.countDocuments();
-        const totalPages = Math.ceil(totalResults / perPage);
+    const totalResults = await User.countDocuments();
+    const totalPages = Math.ceil(totalResults / perPage);
 
-        res.send({
-            dati: user,
-            totalPages,
-            totalResults,
-            page,
-        });
-    } catch (err) {
-        res.status(500).send();
-    }
+    res.send({
+      dati: user,
+      totalPages,
+      totalResults,
+      page,
+    });
+  } catch (err) {
+    res.status(500).send();
+  }
 };
 
 
 export const GetIDUser = async (req, res) => {
-    try {
-        const id = req.params.userId;
+  try {
+    const id = req.params.userId;
 
-        const user = await User.findById(id).select('-password -verificationCode -resetPasswordCode -refreshTokens -lastPasswordResetEmailSentAt -resetPasswordExpires -accountLockedUntil -loginAttempts'); if (!user) return res.status(404).json({ message: 'User not found' });
-;
-        if (!user) res.status(404).send();
-        else res.send(user);
-    } catch (err) {
-        console.log(err);
-        res.status(500).send({ message: 'Not Found' });
-    }
+    const user = await User.findById(id).select('-password -verificationCode -resetPasswordCode -refreshTokens -lastPasswordResetEmailSentAt -resetPasswordExpires -accountLockedUntil -loginAttempts'); if (!user) return res.status(404).json({ message: 'User not found' });
+    ;
+    if (!user) res.status(404).send();
+    else res.send(user);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ message: 'Not Found' });
+  }
 };
 
 export const PutUser = async (req, res) => {
@@ -102,7 +102,7 @@ export const updateEmailPreferences = async (req, res) => {
     if (typeof receiveFeedingEmails !== 'boolean') {
       return res.status(400).json({ message: 'Valore non valido per receiveFeedingEmails' });
     }
-  const id = req.params.userId;
+    const id = req.params.userId;
 
     const user = await User.findByIdAndUpdate(
       id,
@@ -121,49 +121,49 @@ export const updateEmailPreferences = async (req, res) => {
 };
 
 export const DeleteUser = async (req, res) => {
-    try {
-        const userId = req.params.userId;
-        const user = await User.findById(userId);
-        if (!user) return res.status(404).json({ message: 'Utente non trovato' });
+  try {
+    const userId = req.params.userId;
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: 'Utente non trovato' });
 
-        // Trova tutti i rettili dell'utente
-        const reptiles = await Reptile.find({ user: userId });
+    // Trova tutti i rettili dell'utente
+    const reptiles = await Reptile.find({ user: userId });
 
-        // Per ogni rettile elimina feedings, eventi, notifiche
-        for (const reptile of reptiles) {
-            await Feeding.deleteMany({ reptile: reptile._id });
-            await Event.deleteMany({ reptile: reptile._id });
-            await Notification.deleteMany({ reptile: reptile._id });
-        }
-
-        // Elimina i rettili
-        await Reptile.deleteMany({ user: userId });
-
-        // Elimina riproduzioni legate all'utente
-        await Breeding.deleteMany({ user: userId });
-
-        // Elimina notifiche dell'utente
-        await Notification.deleteMany({ user: userId });
-
-        // Elimina utente
-        await User.findByIdAndDelete(userId);
-
-        // Revoca token se presente
-        const token = req.header('Authorization')?.split(' ')[1];
-        if (token) {
-            const decoded = jwt.decode(token);
-            if (decoded) {
-                const revokedToken = new RevokedToken({
-                    token,
-                    expiresAt: new Date(decoded.exp * 1000),
-                });
-                await revokedToken.save();
-            }
-        }
-
-        return res.status(200).json({ message: 'Utente e dati collegati eliminati con successo' });
-    } catch (error) {
-        console.error('Errore durante l\'eliminazione dell\'utente:', error);
-        return res.status(500).json({ message: 'Errore del server' });
+    // Per ogni rettile elimina feedings, eventi, notifiche
+    for (const reptile of reptiles) {
+      await Feeding.deleteMany({ reptile: reptile._id });
+      await Event.deleteMany({ reptile: reptile._id });
+      await Notification.deleteMany({ reptile: reptile._id });
     }
+
+    // Elimina i rettili
+    await Reptile.deleteMany({ user: userId });
+
+    // Elimina riproduzioni legate all'utente
+    await Breeding.deleteMany({ user: userId });
+
+    // Elimina notifiche dell'utente
+    await Notification.deleteMany({ user: userId });
+
+    // Elimina utente
+    await User.findByIdAndDelete(userId);
+
+    // Revoca token se presente
+    const token = req.header('Authorization')?.split(' ')[1];
+    if (token) {
+      const decoded = jwt.decode(token);
+      if (decoded) {
+        const revokedToken = new RevokedToken({
+          token,
+          expiresAt: new Date(decoded.exp * 1000),
+        });
+        await revokedToken.save();
+      }
+    }
+
+    return res.status(200).json({ message: 'Utente e dati collegati eliminati con successo' });
+  } catch (error) {
+    console.error('Errore durante l\'eliminazione dell\'utente:', error);
+    return res.status(500).json({ message: 'Errore del server' });
+  }
 };

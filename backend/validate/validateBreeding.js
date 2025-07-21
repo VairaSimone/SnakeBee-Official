@@ -1,4 +1,3 @@
-// validators/breedingValidator.js
 import { body, param } from 'express-validator';
 import mongoose from 'mongoose';
 
@@ -21,10 +20,6 @@ export const createBreedingRules = [
     .isISO8601().toDate().withMessage('incubationEnd deve essere una data valida'),
   body('incubationNotes').optional().isString(),
   body('notes').optional().isString(),
-];
-
-export const getByUserRules = [
-  // non serve più alcun param.userId: userId lo prendiamo da req.user
 ];
 
 export const breedingIdParamRule = [

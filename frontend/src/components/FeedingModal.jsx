@@ -1,10 +1,3 @@
-// Miglioramenti: 
-// - Colori input
-// - Validazione date future
-// - Max lunghezza note
-// - UI migliorata per cronologia e mobile
-// - Tooltip e placeholder più chiari
-
 import React, { useState, useEffect } from 'react';
 import api from '../services/api';
 
@@ -18,17 +11,17 @@ const FeedingModal = ({ show, handleClose, reptileId, onFeedingAdded, onSuccess 
     notes: '',
     daysUntilNextFeeding: '',
   });
-useEffect(() => {
-  if (show) {
-    document.body.style.overflow = 'hidden';
-  } else {
-    document.body.style.overflow = '';
-  }
+  useEffect(() => {
+    if (show) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
 
-  return () => {
-    document.body.style.overflow = '';
-  };
-}, [show]);
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [show]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
@@ -80,14 +73,14 @@ useEffect(() => {
   if (!show) return null;
 
   return (
-<div
-  className="fixed inset-0 z-50 bg-transparent flex items-center justify-center px-4"
-  onClick={handleClose} // chiude il modale cliccando sullo sfondo
->
-  <div
-    className="bg-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto p-6 relative"
-    onClick={(e) => e.stopPropagation()} // impedisce la chiusura se clicchi dentro il modale
-  >        <button onClick={handleClose} className="absolute top-4 right-4 text-xl font-bold text-gray-700 hover:text-red-500">&times;</button>
+    <div
+      className="fixed inset-0 z-50 bg-transparent flex items-center justify-center px-4"
+      onClick={handleClose} // chiude il modale cliccando sullo sfondo
+    >
+      <div
+        className="bg-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto p-6 relative"
+        onClick={(e) => e.stopPropagation()} // impedisce la chiusura se clicchi dentro il modale
+      >        <button onClick={handleClose} className="absolute top-4 right-4 text-xl font-bold text-gray-700 hover:text-red-500">&times;</button>
 
         <h2 className="text-2xl font-semibold mb-6 text-gray-800">Gestione Pasti</h2>
 
@@ -122,9 +115,9 @@ useEffect(() => {
                   <td className="p-2 whitespace-nowrap">{f.foodType}</td>
                   <td className="p-2">{f.quantity || '—'}</td>
                   <td className="p-2 whitespace-nowrap">{new Date(f.nextFeedingDate).toLocaleDateString()}</td>
-<td className="p-2 max-w-xs truncate" title={f.notes}>
-  {f.notes || '—'}
-</td>                  <td className="p-2">
+                  <td className="p-2 max-w-xs truncate" title={f.notes}>
+                    {f.notes || '—'}
+                  </td>                  <td className="p-2">
                     <button onClick={() => handleDelete(f._id)} className="text-red-500 hover:text-red-700 font-semibold">Elimina</button>
                   </td>
                 </tr>

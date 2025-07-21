@@ -3,7 +3,7 @@ import Feeding from '../models/Feeding.js';
 import Notification from '../models/Notification.js';
 import Redis from 'ioredis';
 import Redlock from 'redlock';
-import FailedEmail from '../models/FailedEmail.js'; // in alto
+import FailedEmail from '../models/FailedEmail.js';
 import { transporter } from '../config/mailer.config.js';
 
 
@@ -22,7 +22,7 @@ const normalizeDate = (date) => {
 };
 
 cron.schedule('0 0 * * *', async () => {
-      try {
+  try {
     const lock = await redlock.acquire(['locks:feedingJob'], 5 * 60 * 1000); // 5 min TTL
 
 
@@ -55,10 +55,10 @@ cron.schedule('0 0 * * *', async () => {
         const reptile = feeding.reptile;
         const user = reptile ? reptile.user : null;
         if (!user || !user.email) continue;
-if (user.receiveFeedingEmails === false) {
-  console.log(`Utente ${user.email} ha disattivato le notifiche alimentazione.`);
-  continue;
-}
+        if (user.receiveFeedingEmails === false) {
+          console.log(`Utente ${user.email} ha disattivato le notifiche alimentazione.`);
+          continue;
+        }
         if (!reptile || !user) {
           console.warn(`Missing reptile or user for feeding with ID ${feeding._id}`);
           continue;
@@ -90,7 +90,7 @@ if (user.receiveFeedingEmails === false) {
           console.error(`Errore: L'utente con ID ${user._id} non ha un'email.`);
           continue;
         }
-let mailOptions;
+        let mailOptions;
         try {
           // Verifica se esiste già una notifica identica per oggi
           const existingNotification = await Notification.findOne({
@@ -102,11 +102,6 @@ let mailOptions;
               $lt: new Date().setHours(23, 59, 59, 999),
             },
           });
-
-          //if (existingNotification) {
-            //console.log(`Notifica già esistente per l'utente ${user.email}, non invio duplicato.`);
-            //continue;
-          //}
 
           // Crea la notifica (status iniziale "pending")
           const notification = new Notification({
@@ -122,7 +117,7 @@ let mailOptions;
 
           // Configura invio email
           // Prepara il payload
-           mailOptions = {
+          mailOptions = {
             from: `"SnakeBee" <noreply@snakebee.it>`,
             to: user.email,
             subject: 'Notifica di alimentazione rettili',

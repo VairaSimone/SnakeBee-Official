@@ -90,8 +90,8 @@ const Navbar = () => {
               <div className="relative" ref={avatarMenuRef}>
                 <button onClick={() => setAvatarMenuOpen(!avatarMenuOpen)}>
                   <img
- src={user?.avatar?.trim() ? user.avatar : '/default-avatar.png'}
-  onError={(e) => { e.target.src = '/default-avatar.png'; }}                    alt="Avatar"
+                    src={user?.avatar?.trim() ? user.avatar : '/default-avatar.png'}
+                    onError={(e) => { e.target.src = '/default-avatar.png'; }} alt="Avatar"
                     className="w-9 h-9 rounded-full border-2 border-[#228B22]"
                   />
                 </button>

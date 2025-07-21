@@ -45,7 +45,6 @@ const year = pairingDate ? new Date(pairingDate).getFullYear() : new Date().getF
       seasonYear: year,
       events, hatchlings
     });
-console.log(breeding)
     const saved = await breeding.save();
     return res.status(201).json({ message: 'Creato con successo', breeding: saved });
   } catch (err) {

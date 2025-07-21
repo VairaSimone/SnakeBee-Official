@@ -14,14 +14,15 @@ const currentYear = new Date().getFullYear();
 const hatchlingSchema = yup.object({
   morph: yup.string().required('Morph è richiesto'),
   sex: yup.string().oneOf(['M', 'F', 'U']).required('Sesso è richiesto'),
-weight: yup
-  .number()
-  .transform((value, originalValue) =>
-    String(originalValue).trim() === '' ? null : Number(originalValue)
-  )
-  .typeError('Peso deve essere un numero')
-  .positive('Peso deve essere positivo')
-  .required('Peso è richiesto'),});
+  weight: yup
+    .number()
+    .transform((value, originalValue) =>
+      String(originalValue).trim() === '' ? null : Number(originalValue)
+    )
+    .typeError('Peso deve essere un numero')
+    .positive('Peso deve essere positivo')
+    .required('Peso è richiesto'),
+});
 
 const schema = yup.object({
   male: yup.string().required('Maschio obbligatorio'),
@@ -44,12 +45,13 @@ const schema = yup.object({
         .typeError('Data evento non valida'),
     })
   ).min(1, 'Almeno un evento richiesto'),
- hatchlings: yup.array().of(hatchlingSchema)
+  hatchlings: yup.array().of(hatchlingSchema)
     .when('events', {
       is: (events) => events?.some(e => e.type === 'birth'),
       then: (schema) => schema.min(1, 'Almeno un cucciolo è richiesto se c’è un evento di nascita'),
       otherwise: (schema) => schema.max(0),
-    }),});
+    }),
+});
 
 const BreedingModal = ({ show, handleClose, refresh, seasonOpen }) => {
   const user = useSelector(selectUser);
@@ -76,11 +78,11 @@ const BreedingModal = ({ show, handleClose, refresh, seasonOpen }) => {
 
   const { fields: events, append: addEvent, remove: removeEvent } = useFieldArray({ control, name: 'events' });
   const { fields: hatchlings, append: addHatchling, remove: removeHatchling } = useFieldArray({ control, name: 'hatchlings' });
-useEffect(() => {
-  if (!hasBirthEvent && hatchlings.length > 0) {
-    reset(prev => ({ ...prev, hatchlings: [] }));
-  }
-}, [hasBirthEvent, hatchlings.length, reset]);
+  useEffect(() => {
+    if (!hasBirthEvent && hatchlings.length > 0) {
+      reset(prev => ({ ...prev, hatchlings: [] }));
+    }
+  }, [hasBirthEvent, hatchlings.length, reset]);
 
   // Blocco modifica seasonYear forzando valore a currentYear se viene cambiato (anche se disabilitato)
   useEffect(() => {
@@ -141,9 +143,7 @@ useEffect(() => {
 
     try {
       const res = await api.post('/breeding', payload);
-      console.log('POST /breeding response:', payload);
       const id = res.breeding._id;
-      console.log('RESPONSE:', res); // verifica se contiene breeding._id
 
       // aggiungo eventi extra e cuccioli
       await Promise.all(
@@ -162,8 +162,6 @@ useEffect(() => {
     }
   };
   useEffect(() => {
-    console.log('Form errors:', errors);
-    console.log('Form isValid:', isValid);
   }, [errors, isValid]);
 
 
@@ -305,52 +303,52 @@ useEffect(() => {
 
           {/* Cuccioli */}
 
-{hasBirthEvent && (
-  <div>
-    <label className="font-medium">Cuccioli</label>
-    {hatchlings.map((f, i) => (
-      <div key={f.id} className="bg-white text-black flex items-end gap-2 mb-2">
-        <input
-          placeholder="Morph"
-          {...register(`hatchlings.${i}.morph`)}
-          disabled={!seasonOpen}
-          className="bg-white text-black border p-2 rounded"
-        />
-        <input
-          type="number"
-          placeholder="Peso g"
-          {...register(`hatchlings.${i}.weight`)}
-          disabled={!seasonOpen}
-          className="bg-white text-black border p-2 rounded"
-        />
-        <select
-          {...register(`hatchlings.${i}.sex`)}
-          disabled={!seasonOpen}
-          className="bg-white text-black border p-2 rounded"
-        >
-          <option value="">Sesso</option>
-          {sexOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-        </select>
-        {seasonOpen && (
-          <button type="button" onClick={() => removeHatchling(i)} className="text-red-600 text-xl">✕</button>
-        )}
+          {hasBirthEvent && (
+            <div>
+              <label className="font-medium">Cuccioli</label>
+              {hatchlings.map((f, i) => (
+                <div key={f.id} className="bg-white text-black flex items-end gap-2 mb-2">
+                  <input
+                    placeholder="Morph"
+                    {...register(`hatchlings.${i}.morph`)}
+                    disabled={!seasonOpen}
+                    className="bg-white text-black border p-2 rounded"
+                  />
+                  <input
+                    type="number"
+                    placeholder="Peso g"
+                    {...register(`hatchlings.${i}.weight`)}
+                    disabled={!seasonOpen}
+                    className="bg-white text-black border p-2 rounded"
+                  />
+                  <select
+                    {...register(`hatchlings.${i}.sex`)}
+                    disabled={!seasonOpen}
+                    className="bg-white text-black border p-2 rounded"
+                  >
+                    <option value="">Sesso</option>
+                    {sexOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+                  </select>
+                  {seasonOpen && (
+                    <button type="button" onClick={() => removeHatchling(i)} className="text-red-600 text-xl">✕</button>
+                  )}
 
-        {/* Errori */}
-        {errors.hatchlings?.[i]?.morph && <p className="text-red-600">{errors.hatchlings[i].morph.message}</p>}
-      </div>
-    ))}
+                  {/* Errori */}
+                  {errors.hatchlings?.[i]?.morph && <p className="text-red-600">{errors.hatchlings[i].morph.message}</p>}
+                </div>
+              ))}
 
-    {seasonOpen && (
-      <button
-        type="button"
-        onClick={() => addHatchling({ morph: '', weight: '', sex: 'U' })}
-        className="text-blue-600 mt-2"
-      >
-        + cucciolo
-      </button>
-    )}
-  </div>
-)}
+              {seasonOpen && (
+                <button
+                  type="button"
+                  onClick={() => addHatchling({ morph: '', weight: '', sex: 'U' })}
+                  className="text-blue-600 mt-2"
+                >
+                  + cucciolo
+                </button>
+              )}
+            </div>
+          )}
 
           <button
             type="submit"

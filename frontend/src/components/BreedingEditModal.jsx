@@ -85,7 +85,7 @@ const BreedingEditModal = ({ breeding, show, handleClose, refresh }) => {
 
       toast.success('Riproduzione aggiornata con successo');
       refresh();
-      handleClose(); // Chiudi modale
+      handleClose(); 
     } catch (err) {
       toast.error('Errore durante l’aggiornamento');
     } finally {

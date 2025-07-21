@@ -1,4 +1,3 @@
-// middlewares/Season.js
 export const checkSeasonOpen = (docGetter) => async (req, res, next) => {
   const item = await docGetter(req);
   if (!item) return res.status(404).json({ message: "Non trovato" });

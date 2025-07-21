@@ -1,4 +1,3 @@
-// utils/validators.js
 
 /**
  * Controlla che le date siano in ordine cronologico:

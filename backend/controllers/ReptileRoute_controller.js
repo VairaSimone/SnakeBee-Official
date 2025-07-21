@@ -153,22 +153,22 @@ export const PutReptile = async (req, res) => {
 
         let imageUrl = reptile.image;
 
-if (req.file) {
-  // Carica buffer su Cloudinary
-      if (reptile.image) {
-        const publicId = reptile.image.split('/').pop().split('.')[0];
-        await cloudinary.uploader.destroy(publicId).catch(console.warn);
-      }
+        if (req.file) {
+            // Carica buffer su Cloudinary
+            if (reptile.image) {
+                const publicId = reptile.image.split('/').pop().split('.')[0];
+                await cloudinary.uploader.destroy(publicId).catch(console.warn);
+            }
 
-  const result = await new Promise((resolve, reject) => {
-    const uploadStream = cloudinary.uploader.upload_stream(
-      { resource_type: 'image' },
-      (error, result) => error ? reject(error) : resolve(result)
-    );
-    streamifier.createReadStream(req.file.buffer).pipe(uploadStream);
-  });
-  imageUrl = result.secure_url;
-}
+            const result = await new Promise((resolve, reject) => {
+                const uploadStream = cloudinary.uploader.upload_stream(
+                    { resource_type: 'image' },
+                    (error, result) => error ? reject(error) : resolve(result)
+                );
+                streamifier.createReadStream(req.file.buffer).pipe(uploadStream);
+            });
+            imageUrl = result.secure_url;
+        }
         const parseDateOrNull = (value) => {
             if (!value || value === 'null') return null;
             return new Date(value);
@@ -187,7 +187,7 @@ if (req.file) {
         reptile.birthDate = birthDateObject;
         reptile.image = imageUrl;
         reptile.sex = sex || reptile.sex;
-reptile.isBreeder = isBreeder === 'true' || isBreeder === true;
+        reptile.isBreeder = isBreeder === 'true' || isBreeder === true;
         reptile.notes = notes || reptile.notes;
         const updatedReptile = await reptile.save();
 

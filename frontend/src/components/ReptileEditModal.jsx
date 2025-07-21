@@ -28,13 +28,13 @@ const ReptileEditModal = ({ show, handleClose, reptile, setReptiles, onSuccess }
   const closeOnOverlayClick = (e) => {
     if (e.target.id === 'overlay') handleClose();
   };
-useEffect(() => {
-  if (show) {
-    setToastMsg(null);      // ✅ reset messaggio toast
-    setErrorMessage('');    // ✅ reset messaggi d’errore
-    setImage(null);         // ✅ reset immagine se vuoi
-  }
-}, [show]);
+  useEffect(() => {
+    if (show) {
+      setToastMsg(null);      // ✅ reset messaggio toast
+      setErrorMessage('');    // ✅ reset messaggi d’errore
+      setImage(null);         // ✅ reset immagine se vuoi
+    }
+  }, [show]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -74,11 +74,7 @@ useEffect(() => {
         }
       });
       if (image) formDataToSubmit.append('image', image);
-    for (let [key, value] of formDataToSubmit.entries()) {
-      console.log(`${key}:`, value);
-    }
       const { data } = await api.put(`/reptile/${reptile._id}`, formDataToSubmit);
-    console.log('API response:', data);
       setToastMsg({ type: 'success', text: 'Rettile aggiornato!' });
       setReptiles((prev) => prev.map((r) => (r._id === data._id ? data : r)));
       onSuccess?.();

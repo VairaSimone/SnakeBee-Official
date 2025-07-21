@@ -59,7 +59,7 @@ export const login = async (req, res, next) => {
       return res.status(403).json({ message: "Il tuo account è stato bannato. Contatta l'assistenza per informazioni." });
     }
     // Controllo email verificata
-    if (!user.isVerified) { 
+    if (!user.isVerified) {
       return res.status(403).json({ message: "Email non verificata. Controlla la tua casella di posta per il codice di verifica." });
     }
 
@@ -83,14 +83,14 @@ export const login = async (req, res, next) => {
     const hashedToken = await bcrypt.hash(refreshToken, 12);
     if (!user.refreshTokens) user.refreshTokens = [];
     if (user.refreshTokens.length >= 10) {
-      user.refreshTokens = user.refreshTokens.slice(-9); 
+      user.refreshTokens = user.refreshTokens.slice(-9);
     }
     user.refreshTokens.push({ token: hashedToken });
     await user.save();
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: false,
-sameSite: 'lax',
+      secure: true,
+      sameSite: 'lax',
       path: '/',
 
       maxAge: 7 * 24 * 60 * 60 * 1000
@@ -118,7 +118,9 @@ export const register = async (req, res, next) => {
     if (existingUser) {
       return res.status(400).json({ message: "Email già in uso" });
     }
-
+    if (!req.body.privacyConsent) {
+      return res.status(400).json({ message: "Devi accettare la Privacy Policy per registrarti." });
+    }
     // Genera un codice di verifica
     const verificationCode = crypto.randomBytes(3).toString('hex').toUpperCase(); // Es. codice di 6 caratteri
     const count = await pwnedPassword(req.body.password);
@@ -133,12 +135,16 @@ export const register = async (req, res, next) => {
       avatar: req.body.avatar,
       verificationCode,
       isVerified: false,
+      privacyConsent: {
+        accepted: req.body.privacyConsent === true,
+        timestamp: new Date()
+      }
     });
 
 
     // Invia l'email di verifica
     await newUser.save();
-        await sendVerificationEmail(newUser.email, verificationCode);
+    await sendVerificationEmail(newUser.email, verificationCode);
     // Modifica il messaggio di risposta
     res.status(201).json({ message: "Registrazione quasi completata! Controlla la tua email per il codice di verifica." });
   } catch (e) {
@@ -199,8 +205,8 @@ export const logout = async (req, res, next) => {
 
     res.clearCookie('refreshToken', {
       httpOnly: true,
-sameSite: 'lax',
-      secure: false
+      sameSite: 'lax',
+      secure: true
     });
 
     return res.status(200).json({ message: "Logout successful" });
@@ -212,7 +218,7 @@ sameSite: 'lax',
 
 export const callBackGoogle = async (req, res, next) => {
   try {
-    const { accessToken, refreshToken,  googleId, name, email} = req.user;
+    const { accessToken, refreshToken, googleId, name, email } = req.user;
     if (!accessToken || !refreshToken) return res.status(401).send("Autenticazione fallita");
 
     let user = await User.findOne({ googleId });
@@ -220,8 +226,12 @@ export const callBackGoogle = async (req, res, next) => {
       user = new User({
         googleId,
         name: name || "User",
-        email,  // AGGIUNGI QUESTO!
-    avatar: profile._json.picture || defaultAvatarURL,
+        email,
+        avatar: profile._json.picture || defaultAvatarURL,
+            privacyConsent: {
+      accepted: true,
+      timestamp: new Date()
+    }
       });
       user.loginHistory = user.loginHistory || [];
       user.loginHistory.push({
@@ -238,15 +248,15 @@ export const callBackGoogle = async (req, res, next) => {
     const hashedToken = await bcrypt.hash(refreshToken, 12);
     if (!user.refreshTokens) user.refreshTokens = [];
     if (user.refreshTokens.length >= 10) {
-      user.refreshTokens = user.refreshTokens.slice(-9); // così poi pushi il 10°
+      user.refreshTokens = user.refreshTokens.slice(-9);
     }
     user.refreshTokens.push({ token: hashedToken });
     await user.save();
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
-      secure: false,
-sameSite: 'lax',
+      secure: true,
+      sameSite: 'lax',
       path: '/',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
@@ -274,12 +284,12 @@ export const changePassword = async (req, res, next) => {
     if (!user) {
       return res.status(404).json({ message: "Utente non trovato." });
     }
-if (!user.password) {
-  return res.status(400).json({ message: "Impossibile cambiare password: account creato con Google" });
-}
+    if (!user.password) {
+      return res.status(400).json({ message: "Impossibile cambiare password: account creato con Google" });
+    }
 
     // Verifica che la vecchia password corrisponda
-const isMatch = await bcrypt.compare(oldPassword, user.password);
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
     if (!isMatch) {
       return res.status(401).json({ message: "La vecchia password non è corretta." });
     }
@@ -373,8 +383,8 @@ export const verifyEmail = async (req, res, next) => {
     }
 
     // Verifica riuscita: aggiorna l'utente
-    user.isVerified = true; //
-    user.verificationCode = null; // Rimuovi il codice usato
+    user.isVerified = true;
+    user.verificationCode = null;
     await user.save();
 
     res.json({ message: "Email verificata con successo! Ora puoi effettuare il login." });
@@ -385,7 +395,6 @@ export const verifyEmail = async (req, res, next) => {
 };
 
 // Funzione per cambiare l'email e rinviare l'email di verifica
-// controller/auth.controller.js
 export const changeEmailAndResendVerification = async (req, res, next) => {
   try {
     const { newEmail, password } = req.body;
@@ -399,8 +408,8 @@ export const changeEmailAndResendVerification = async (req, res, next) => {
     if (!user) return res.status(404).json({ message: "Utente non trovato." });
 
     if (!user.password) {
-  return res.status(400).json({ message: "Questo account non ha una password impostata. Risulta essere impossibile effettuare modifiche su un account creato con Google" });
-}
+      return res.status(400).json({ message: "Questo account non ha una password impostata. Risulta essere impossibile effettuare modifiche su un account creato con Google" });
+    }
 
     const isPasswordValid = await bcrypt.compareSync(password, user.password);
     if (!isPasswordValid) {
@@ -431,13 +440,13 @@ export const changeEmailAndResendVerification = async (req, res, next) => {
     user.verificationCode = code;
     user.lastVerificationEmailSentAt = new Date();
     await user.save();
-res.clearCookie('refreshToken', {
-  httpOnly: true,
-  sameSite: 'lax',
-  secure: false,
-});
+    res.clearCookie('refreshToken', {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: true,
+    });
     await sendVerificationEmail(newEmail, code);
-res.json({ message: "Email aggiornata! Verifica la nuova casella.", forceLogout: true });
+    res.json({ message: "Email aggiornata! Verifica la nuova casella.", forceLogout: true });
   } catch (e) {
     console.error("Errore nel cambio email:", e);
     next(e);
@@ -482,7 +491,7 @@ export const forgotPassword = async (req, res, next) => {
     // Salva il codice di reset e la scadenza nell'utente
     user.resetPasswordCode = resetCode;
     user.resetPasswordExpires = resetExpires;
-    user.lastPasswordResetEmailSentAt = new Date(); // Aggiorna il timestamp
+    user.lastPasswordResetEmailSentAt = new Date();
     await user.save();
 
     // Invia l'email con il codice di reset

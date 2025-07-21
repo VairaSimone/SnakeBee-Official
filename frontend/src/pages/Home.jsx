@@ -52,11 +52,14 @@ const Home = () => {
             Ogni contributo ci aiuta a migliorare la piattaforma, aggiungere nuove funzionalità e rimanere attivi!
           </p>
           <a
-            href="https://www.paypal.com/donate?hosted_button_id=TUO_ID_PAYPAL"
+            href="https://www.paypal.com/donate/?hosted_button_id=8NYR4QZZ3QGBS"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block bg-[#228B22] text-white px-6 py-2 rounded-full font-semibold hover:bg-green-700 transition"
+            className="inline-flex items-center gap-2 bg-[#228B22] text-white px-6 py-2 rounded-full font-semibold hover:bg-green-700 transition"
           >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="white" viewBox="0 0 24 24" width="20" height="20">
+              <path d="M4 4h16v2H4zm0 4h12v2H4zm0 4h16v2H4zm0 4h12v2H4z" />
+            </svg>
             Fai una donazione
           </a>
         </section>

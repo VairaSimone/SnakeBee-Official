@@ -25,21 +25,21 @@ const Breeding = () => {
   const [eventFilter, setEventFilter] = useState('all');
   const [maleFilter, setMaleFilter] = useState('all');
   const [femaleFilter, setFemaleFilter] = useState('all');
-const [editData, setEditData] = useState(null);
-const [deleteTarget, setDeleteTarget] = useState(null);
-const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [editData, setEditData] = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-const handleDelete = async () => {
-  try {
-    await api.delete(`/breeding/${deleteTarget._id}`);
-    toast.success('Riproduzione eliminata');
-    fetchRecap(year);
-    setShowDeleteModal(false);
-    setDeleteTarget(null);
-  } catch {
-    toast.error("Errore durante l'eliminazione");
-  }
-};
+  const handleDelete = async () => {
+    try {
+      await api.delete(`/breeding/${deleteTarget._id}`);
+      toast.success('Riproduzione eliminata');
+      fetchRecap(year);
+      setShowDeleteModal(false);
+      setDeleteTarget(null);
+    } catch {
+      toast.error("Errore durante l'eliminazione");
+    }
+  };
 
   const fetchRecap = async (y) => {
     try {
@@ -181,9 +181,9 @@ const handleDelete = async () => {
           </p>
 
           <div className="space-y-6">
-{data.data
-  .filter(item => item.male?.name && item.male.name !== 'Animale eliminato' || item.female?.name && item.female.name !== 'Animale eliminato')
-  .map((item) => (              <div
+            {data.data
+              .filter(item => item.male?.name && item.male.name !== 'Animale eliminato' || item.female?.name && item.female.name !== 'Animale eliminato')
+              .map((item) => (<div
                 key={item._id}
                 className="bg-white shadow rounded-lg p-4 border-l-4 border-blue-500 hover:shadow-lg transition"
               >
@@ -228,36 +228,36 @@ const handleDelete = async () => {
                     })}
                 </div>
 
-{item.hatchlings?.length > 0 && (
-  <div className="mt-3 text-green-900 text-sm font-medium">
-    🐣 Cuccioli nati: <strong>{item.hatchlings.length}</strong>
-    <ul className="list-disc list-inside mt-2 text-green-800">
-      {item.hatchlings.map((h, index) => (
-        <li key={index}>{h.name || `Cucciolo ${index + 1}`}</li>
-      ))}
-    </ul>
-  </div>
-)}
+                {item.hatchlings?.length > 0 && (
+                  <div className="mt-3 text-green-900 text-sm font-medium">
+                    🐣 Cuccioli nati: <strong>{item.hatchlings.length}</strong>
+                    <ul className="list-disc list-inside mt-2 text-green-800">
+                      {item.hatchlings.map((h, index) => (
+                        <li key={index}>{h.name || `Cucciolo ${index + 1}`}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
                 {seasonOpen && (
-  <div className="mt-4 flex gap-3">
-    <button
-      onClick={() => setEditData(item)}
-      className="text-sm text-blue-700 underline"
-    >
-      ✏️ Modifica
-    </button>
-<button
-  onClick={() => {
-    setDeleteTarget(item);
-    setShowDeleteModal(true);
-  }}
-  className="text-sm text-red-700 underline"
->
-  🗑️ Elimina
-</button>  </div>
-)}
+                  <div className="mt-4 flex gap-3">
+                    <button
+                      onClick={() => setEditData(item)}
+                      className="text-sm text-blue-700 underline"
+                    >
+                      ✏️ Modifica
+                    </button>
+                    <button
+                      onClick={() => {
+                        setDeleteTarget(item);
+                        setShowDeleteModal(true);
+                      }}
+                      className="text-sm text-red-700 underline"
+                    >
+                      🗑️ Elimina
+                    </button>  </div>
+                )}
               </div>
-            ))}
+              ))}
           </div>
         </>
       ) : (
@@ -274,40 +274,40 @@ const handleDelete = async () => {
         seasonOpen={seasonOpen}
       />
       {editData && (
-  <BreedingEditModal
-    breeding={editData}
-    show={!!editData}
-    handleClose={() => setEditData(null)}
-    refresh={() => fetchRecap(year)}
-  />
-)}
-{showDeleteModal && deleteTarget && (
-  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-    <div className="bg-white rounded-lg p-6 w-full max-w-md">
-      <h3 className="text-lg font-bold text-gray-900 mb-4">Conferma Eliminazione</h3>
-      <p className="text-gray-700 mb-6">
-        Sei sicuro di voler eliminare l'evento tra <strong>{deleteTarget.male?.name}</strong> × <strong>{deleteTarget.female?.name}</strong>?
-      </p>
-      <div className="flex justify-end gap-3">
-        <button
-          onClick={() => {
-            setShowDeleteModal(false);
-            setDeleteTarget(null);
-          }}
-          className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 text-black"
-        >
-          Annulla
-        </button>
-        <button
-          onClick={handleDelete}
-          className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-        >
-          Elimina
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+        <BreedingEditModal
+          breeding={editData}
+          show={!!editData}
+          handleClose={() => setEditData(null)}
+          refresh={() => fetchRecap(year)}
+        />
+      )}
+      {showDeleteModal && deleteTarget && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <h3 className="text-lg font-bold text-gray-900 mb-4">Conferma Eliminazione</h3>
+            <p className="text-gray-700 mb-6">
+              Sei sicuro di voler eliminare l'evento tra <strong>{deleteTarget.male?.name}</strong> × <strong>{deleteTarget.female?.name}</strong>?
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  setDeleteTarget(null);
+                }}
+                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 text-black"
+              >
+                Annulla
+              </button>
+              <button
+                onClick={handleDelete}
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+              >
+                Elimina
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

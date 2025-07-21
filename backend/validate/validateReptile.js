@@ -18,7 +18,6 @@ export const validateReptile = [
   body('weight')
     .optional()
     .isFloat({ min: 0.1 }).withMessage('Peso deve essere un numero positivo'),
-  // eventuale validazione per note e immagine lasciata libera...
 ];
 
 export const reptileIdParam = [

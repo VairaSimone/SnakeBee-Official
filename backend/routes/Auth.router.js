@@ -27,7 +27,7 @@ authRouter.get('/login-history', authenticateJWT, async (req, res) => {
         const user = await User.findById(req.user.userid).select('loginHistory');
         if (!user) return res.status(404).json({ message: 'User not found' });
 
-        const history = [...(user.loginHistory || [])].reverse(); // opzionale
+        const history = [...(user.loginHistory || [])].reverse(); 
         res.json(history);
     } catch (e) {
         console.error('Errore login-history:', e);
@@ -43,5 +43,7 @@ authRouter.post("/change-password", [authenticateJWT, validateBody(validateAuth.
 
 authRouter.get("/login-google", passport.authenticate("google", { scope: ["profile", "email"] }))
 authRouter.get("/callback-google", passport.authenticate("google", { session: false }), authController.callBackGoogle)
+
+
 
 export default authRouter;

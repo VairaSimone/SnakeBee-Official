@@ -21,6 +21,8 @@ import Dashboard from './pages/Dashboard';
 import ProtectedLayout from './components/ProtectedLayout';
 import Breeding from './pages/Breeding';
 import NotFound from './pages/NotFound';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import api from './services/api';
 
 function App() {
   const dispatch = useDispatch();
@@ -58,6 +60,7 @@ function App() {
             <Footer />
           </>
         } />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
