@@ -137,8 +137,8 @@ export const register = async (req, res, next) => {
 
 
     // Invia l'email di verifica
-    await sendVerificationEmail(newUser.email, verificationCode);
     await newUser.save();
+        await sendVerificationEmail(newUser.email, verificationCode);
     // Modifica il messaggio di risposta
     res.status(201).json({ message: "Registrazione quasi completata! Controlla la tua email per il codice di verifica." });
   } catch (e) {
