@@ -8,56 +8,58 @@ import { FaGoogle } from 'react-icons/fa';
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false); // 🔄
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [errorMessage, setErrorMessage] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-        setErrorMessage('');
+    setErrorMessage('');
+    setIsLoading(true); // 🚀 inizio animazione
 
     try {
       const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/v1/login`, { email, password }, {
         withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json',
-        }
+        headers: { 'Content-Type': 'application/json' }
       });
+
       const { accessToken } = res.data;
       localStorage.setItem('token', accessToken);
 
       const userRes = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/v1/me`, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+        headers: { Authorization: `Bearer ${accessToken}` },
       });
 
       if (!userRes.data.isVerified) {
         setErrorMessage('Devi prima verificare la tua email prima di accedere.');
+        setIsLoading(false); // ⛔ stop animazione
         return;
       }
 
       dispatch(loginUser(userRes.data));
       navigate('/dashboard');
     } catch (err) {
-  const msg = err.response?.data?.message;
-
-  if (msg === 'Email non verificata. Controlla la tua casella di posta per il codice di verifica.') {
-    setErrorMessage(msg);
-  } else if (err.response?.status === 401) {
-    setErrorMessage('Credenziali non valide o account non esistente.');
-  } else {
-    setErrorMessage(msg || 'Errore durante il login. Riprova più tardi.');
-  }
-}
+      const msg = err.response?.data?.message;
+      if (msg === 'Email non verificata. Controlla la tua casella di posta per il codice di verifica.') {
+        setErrorMessage(msg);
+      } else if (err.response?.status === 401) {
+        setErrorMessage('Credenziali non valide o account non esistente.');
+      } else {
+        setErrorMessage(msg || 'Errore durante il login. Riprova più tardi.');
+      }
+      setIsLoading(false); // ⛔ stop animazione
+    }
   };
 
   const handleGoogleLogin = () => {
-    window.location.href = `${process.env.REACT_APP_BACKEND_URL}/api/v1/login-google`;
+    if (!isLoading) {
+      window.location.href = `${process.env.REACT_APP_BACKEND_URL}/api/v1/login-google`;
+    }
   };
 
   return (
-<div className="min-h-screen flex items-center justify-center bg-[#FAF3E0] px-4">
+    <div className="min-h-screen flex items-center justify-center bg-[#FAF3E0] px-4">
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
         <h2 className="text-2xl font-bold text-[#2B2B2B] mb-6 text-center">Accedi a SnakeBee</h2>
 
@@ -77,6 +79,7 @@ const Login = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              disabled={isLoading}
             />
           </div>
 
@@ -89,6 +92,7 @@ const Login = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              disabled={isLoading}
             />
           </div>
 
@@ -100,9 +104,18 @@ const Login = () => {
 
           <button
             type="submit"
-            className="w-full bg-[#228B22] text-white py-2 rounded-md hover:bg-green-700 transition"
+            disabled={isLoading}
+            className={`w-full py-2 rounded-md text-white transition ${
+              isLoading ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#228B22] hover:bg-green-700'
+            }`}
           >
-            Accedi
+            {isLoading ? (
+              <span className="flex items-center justify-center gap-2">
+                <span className="loader"></span> Accedi...
+              </span>
+            ) : (
+              'Accedi'
+            )}
           </button>
         </form>
 
@@ -111,6 +124,7 @@ const Login = () => {
         </div>
 
         <button
+          disabled={isLoading}
           className="mt-4 w-full py-2 rounded-md border border-gray-300 hover:bg-gray-50 flex items-center justify-center gap-2 transition"
           onClick={handleGoogleLogin}
         >
@@ -127,7 +141,25 @@ const Login = () => {
           </Link>
         </p>
       </div>
+
+      {/* Spinner CSS */}
+      <style>{`
+        .loader {
+          border: 2px solid #f3f3f3;
+          border-top: 2px solid #fff;
+          border-radius: 50%;
+          width: 16px;
+          height: 16px;
+          animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
     </div>
   );
 };
+
 export default Login;

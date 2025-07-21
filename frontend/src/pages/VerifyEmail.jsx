@@ -12,23 +12,23 @@ const VerifyEmail = () => {
   const [resendLoading, setResendLoading] = useState(false);
   const navigate = useNavigate();
   const [query] = useSearchParams();
-const [cooldown, setCooldown] = useState(0);
-const [resendCount, setResendCount] = useState(0);
-const MAX_RESENDS = 5;
+  const [cooldown, setCooldown] = useState(0);
+  const [resendCount, setResendCount] = useState(0);
+  const MAX_RESENDS = 5;
 
 
-useEffect(() => {
-  let timer;
-  if (cooldown > 0) {
-    timer = setInterval(() => {
-      setCooldown((prev) => {
-        if (prev <= 1) clearInterval(timer);
-        return prev - 1;
-      });
-    }, 1000);
-  }
-  return () => clearInterval(timer);
-}, [cooldown]);
+  useEffect(() => {
+    let timer;
+    if (cooldown > 0) {
+      timer = setInterval(() => {
+        setCooldown((prev) => {
+          if (prev <= 1) clearInterval(timer);
+          return prev - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [cooldown]);
 
   useEffect(() => {
     const e = query.get('email');
@@ -48,29 +48,29 @@ useEffect(() => {
     }
   };
 
-const handleResend = async () => {
-  if (!email) return setResendError('Inserisci prima la tua email');
-  if (resendCount >= MAX_RESENDS) return setResendError("Hai raggiunto il limite massimo di tentativi.");
+  const handleResend = async () => {
+    if (!email) return setResendError('Inserisci prima la tua email');
+    if (resendCount >= MAX_RESENDS) return setResendError("Hai raggiunto il limite massimo di tentativi.");
 
-  setResendLoading(true);
-  setResendMessage(null);
-  setResendError(null);
-  try {
-    const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/v1/resend-verification`, { email });
-    setResendMessage(res.data.message);
-    setCooldown(60); // 60 secondi
-    setResendCount((prev) => prev + 1);
-  } catch (err) {
-    const msg = err.response?.data?.message || 'Errore nel reinvio';
-    if (msg.includes("Attendi")) {
-      const seconds = parseInt(msg.match(/\d+/)?.[0]);
-      setCooldown(seconds || 60);
+    setResendLoading(true);
+    setResendMessage(null);
+    setResendError(null);
+    try {
+      const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/v1/resend-verification`, { email });
+      setResendMessage(res.data.message);
+      setCooldown(60); // 60 secondi
+      setResendCount((prev) => prev + 1);
+    } catch (err) {
+      const msg = err.response?.data?.message || 'Errore nel reinvio';
+      if (msg.includes("Attendi")) {
+        const seconds = parseInt(msg.match(/\d+/)?.[0]);
+        setCooldown(seconds || 60);
+      }
+      setResendError(msg);
+    } finally {
+      setResendLoading(false);
     }
-    setResendError(msg);
-  } finally {
-    setResendLoading(false);
-  }
-};
+  };
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#FAF3E0] px-4">
       <div className="bg-white rounded-2xl shadow-lg p-6 max-w-md w-full">
@@ -110,19 +110,19 @@ const handleResend = async () => {
 
         <div className="mt-4 text-center text-sm text-black">
           <p>Non hai ricevuto il codice?</p>
-<button
-  onClick={handleResend}
-  disabled={resendLoading || cooldown > 0 || resendCount >= MAX_RESENDS}
-  className="text-[#FFD700] hover:underline disabled:text-gray-400 disabled:cursor-not-allowed"
->
-  {resendLoading
-    ? 'Invio in corso...'
-    : cooldown > 0
-      ? `Riprova tra ${cooldown}s`
-      : resendCount >= MAX_RESENDS
-        ? 'Limite raggiunto'
-        : 'Reinvia codice'}
-</button>
+          <button
+            onClick={handleResend}
+            disabled={resendLoading || cooldown > 0 || resendCount >= MAX_RESENDS}
+            className="text-[#FFD700] hover:underline disabled:text-gray-400 disabled:cursor-not-allowed"
+          >
+            {resendLoading
+              ? 'Invio in corso...'
+              : cooldown > 0
+                ? `Riprova tra ${cooldown}s`
+                : resendCount >= MAX_RESENDS
+                  ? 'Limite raggiunto'
+                  : 'Reinvia codice'}
+          </button>
           {resendMessage && <p className="text-green-600 mt-2">{resendMessage}</p>}
           {resendError && <p className="text-red-600 mt-2">{resendError}</p>}
         </div>

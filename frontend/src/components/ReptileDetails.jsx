@@ -67,7 +67,8 @@ const ReptileDetails = () => {
       <div className="grid md:grid-cols-2 gap-6 bg-white p-6 rounded-lg shadow-lg">
         {/* LEFT COLUMN */}
         <div>
-          <img src={reptile.image || 'https://placehold.co/300x200'}
+          <img src={reptile.image || 'https://res.cloudinary.com/dg2wcqflh/image/upload/v1753088270/sq1upmjw7xgrvpkghotk.png'}
+
             className="w-full h-auto object-cover rounded-md border border-[#EDE7D6]" />
 
           <h2 className="text-3xl font-bold mt-4 text-[#228B22]">{reptile.name}</h2>

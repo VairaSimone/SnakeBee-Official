@@ -23,6 +23,9 @@ import Breeding from './pages/Breeding';
 import NotFound from './pages/NotFound';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import api from './services/api';
+import CookieConsent from 'react-cookie-consent';
+import DonationBanner from './components/DonationBanner';
+import ReptileTipBanner from './components/ReptileTipBanner';
 
 function App() {
   const dispatch = useDispatch();
@@ -77,7 +80,22 @@ function App() {
         <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
         <Route path="/reptiles/:reptileId" element={<ProtectedRoute><ReptileDetails /></ProtectedRoute>} />
         <Route path="*" element={<NotFound />} />
+      
+      
       </Routes>
+              <CookieConsent
+    location="bottom"
+    buttonText="Accetto"
+    cookieName="cookieConsent"
+    style={{ background: "#2B373B", zIndex: 9999 }}
+    buttonStyle={{ color: "#fff", background: "#4CAF50", fontSize: "14px", padding: '8px 16px', borderRadius: '4px' }}
+    expires={365}
+  >
+    Questo sito utilizza cookie tecnici per migliorare l'esperienza utente. <a href="/privacy-policy" style={{ color: "#aaa" }}>Scopri di più</a>.
+  </CookieConsent>
+    <DonationBanner />
+    <ReptileTipBanner />
+
     </Router>
   );
 }

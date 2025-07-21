@@ -113,7 +113,14 @@ const BreedingModal = ({ show, handleClose, refresh, seasonOpen }) => {
       handleClose();
     }
   };
-
+useEffect(() => {
+  if (saveSuccess) {
+    handleClose();
+    reset();
+    refresh();
+    setSaveSuccess(false);  // pulisco il flag
+  }
+}, [saveSuccess, handleClose, reset, refresh]);
   const onSubmit = async data => {
     setSubmitting(true);
     // validazione sequenza
@@ -150,16 +157,19 @@ const BreedingModal = ({ show, handleClose, refresh, seasonOpen }) => {
         data.events.filter(e => e.type !== 'pairing')
           .map(e => api.post(`/breeding/${id}/events`, e))
       );
-      setSaveSuccess(true);
 
       toast.success('Dati salvati con successo');
-      reset();
-      handleClose()
+    handleClose();  // chiudi prima
+    reset();        // poi resetti
+    refresh();
+
     } catch {
       toast.error('Errore salvataggio');
     } finally {
       setSubmitting(false);
     }
+          setSaveSuccess(true);
+
   };
   useEffect(() => {
   }, [errors, isValid]);

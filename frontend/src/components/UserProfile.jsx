@@ -96,6 +96,7 @@ const UserProfile = () => {
   }, [avatar]);
   useEffect(() => {
     const fetchUser = async () => {
+
       try {
         const { data } = await api.get('/api/v1/me');
         setUser(data);
