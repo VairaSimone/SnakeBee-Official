@@ -1,16 +1,6 @@
 Cose da sistemare:
 
 
-CreateReptile
-- data di nascita, data crescita e date di salute, cliccando sopra non appare il quadratino con il calendario. appare se clicchi nel bianco tutto a destra, ma non va bene
-
-EditReptile
-- data di nascita cliccando sopra non appare il quadratino con il calendario. appare se clicchi nel bianco tutto a destra, ma non va bene
-
-Feeding
-- nella data cliccando sopra non appare il quadratino con il calendario. appare se clicchi nel bianco tutto a destra, ma non va bene
-
-
 
 7. Sistema di badge o achievement
 Premia l’utente con badge tipo “Amante dei rettili”, “Esperto di serpenti”, “Donatore SnakeBee”, ecc.
@@ -42,12 +32,3 @@ Premi 5 volte il logo SnakeBee → suona un sibilo o appare un “Serpente dorat
 
 Scrivi :python: in un input → trasforma il campo in una skin a squame
 
-11. 🎯 Quiz casuale nel footer
-Ogni tot minuti o alla visita di certe pagine, mostra una domandina trivia tipo:
-
-"Qual è la differenza tra un boa e un pitone?"
-[ ] I colori
-[ ] Le scaglie
-[x] Il modo in cui uccidono la preda
-
-Aggiungi reazioni simpatiche in base alla risposta ("Bravo, rettile saggio!", "Oops, torna a leggere su Wikipedia 🐢")
