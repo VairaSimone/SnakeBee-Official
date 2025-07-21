@@ -1,6 +1,9 @@
 import axios from 'axios';
 import { store } from '../config/store';  
 import { loginUser, logoutUser } from '../features/userSlice';
+export const getEvents = (reptileId) => api.get(`reptile/events/${reptileId}`);
+export const postEvent = (event) => api.post('reptile/events', event);
+export const deleteEvent = (eventId) => api.delete(`reptile/events/${eventId}`);
 
 const api = axios.create({
     baseURL: process.env.REACT_APP_BACKEND_URL,

@@ -7,6 +7,7 @@ import crypto from 'crypto';
 import { logSecurityEvent } from "../utils/securityLogger.js";
 
 import { sendVerificationEmail, sendPasswordResetEmail } from "../config/mailer.config.js";
+const MAX_VERIFICATION_EMAILS = 5;
 async function pwnedPassword() {
   const { pwnedPassword } = await import("hibp");
   return pwnedPassword;
@@ -273,9 +274,12 @@ export const changePassword = async (req, res, next) => {
     if (!user) {
       return res.status(404).json({ message: "Utente non trovato." });
     }
+if (!user.password) {
+  return res.status(400).json({ message: "Impossibile cambiare password: account creato con Google" });
+}
 
     // Verifica che la vecchia password corrisponda
-    const isMatch = bcrypt.compareSync(oldPassword, user.password);
+const isMatch = await bcrypt.compare(oldPassword, user.password);
     if (!isMatch) {
       return res.status(401).json({ message: "La vecchia password non è corretta." });
     }
@@ -301,9 +305,11 @@ export const changePassword = async (req, res, next) => {
     next(error);
   }
 };
+
+
 export const resendVerificationEmail = async (req, res, next) => {
   try {
-    const { email } = req.body; // Richiediamo l'email dell'utente
+    const { email } = req.body;
 
     if (!email) {
       return res.status(400).json({ message: "L'email è richiesta." });
@@ -311,32 +317,28 @@ export const resendVerificationEmail = async (req, res, next) => {
 
     const user = await User.findOne({ email: new RegExp(`^${email}$`, 'i') });
 
-    if (!user) {
-      return res.status(404).json({ message: "Utente non trovato." });
+    // Per sicurezza non svelare se l'utente esiste o meno
+    if (!user || user.isVerified) {
+      return res.status(200).json({ message: "Se l'email è corretta, riceverai un codice di verifica." });
     }
 
-    if (user.isVerified) {
-      return res.status(400).json({ message: "Email già verificata." });
+    if (user.verificationEmailAttempts >= MAX_VERIFICATION_EMAILS) {
+      return res.status(429).json({ message: "Hai raggiunto il limite massimo di invii. Contatta il supporto." });
     }
 
-    // Controllo del rate limiting
-    if (user.lastVerificationEmailSentAt) {
-      const timeSinceLastSend = Date.now() - new Date(user.lastVerificationEmailSentAt).getTime();
-      if (timeSinceLastSend < EMAIL_RESEND_COOLDOWN) {
-        const timeLeft = Math.ceil((EMAIL_RESEND_COOLDOWN - timeSinceLastSend) / 1000);
-        return res.status(429).json({ message: `Attendi ${timeLeft} secondi prima di richiedere un nuovo invio.` });
-      }
+    const timeSinceLastSend = Date.now() - new Date(user.lastVerificationEmailSentAt).getTime();
+    if (timeSinceLastSend < EMAIL_RESEND_COOLDOWN) {
+      const timeLeft = Math.ceil((EMAIL_RESEND_COOLDOWN - timeSinceLastSend) / 1000);
+      return res.status(429).json({ message: `Attendi ${timeLeft} secondi prima di richiedere un nuovo invio.` });
     }
 
-    // Genera un nuovo codice di verifica
     const newVerificationCode = crypto.randomBytes(3).toString('hex').toUpperCase();
 
-    // Aggiorna l'utente con il nuovo codice e il timestamp
     user.verificationCode = newVerificationCode;
-    user.lastVerificationEmailSentAt = new Date(); // Aggiorna il timestamp
+    user.lastVerificationEmailSentAt = new Date();
+    user.verificationEmailAttempts = (user.verificationEmailAttempts || 0) + 1;
     await user.save();
 
-    // Invia la nuova email di verifica
     await sendVerificationEmail(user.email, newVerificationCode);
 
     res.json({ message: "Nuova email di verifica inviata. Controlla la tua casella di posta." });
@@ -346,6 +348,8 @@ export const resendVerificationEmail = async (req, res, next) => {
     next(e);
   }
 };
+
+
 export const verifyEmail = async (req, res, next) => {
   try {
     const { email, code } = req.body;
@@ -394,7 +398,11 @@ export const changeEmailAndResendVerification = async (req, res, next) => {
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: "Utente non trovato." });
 
-    const isPasswordValid = bcrypt.compareSync(password, user.password);
+    if (!user.password) {
+  return res.status(400).json({ message: "Questo account non ha una password impostata. Risulta essere impossibile effettuare modifiche su un account creato con Google" });
+}
+
+    const isPasswordValid = await bcrypt.compareSync(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({ message: "Password non corretta." });
     }

@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-const passwordPattern = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?#&])[A-Za-z\\d@$!%*?#&]{8,}$");
+const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
 
 const passwordValidation = Joi.string()
   .pattern(passwordPattern)
@@ -8,7 +8,7 @@ const passwordValidation = Joi.string()
   .required();
 
 export const signupSchema = Joi.object({
-  name: Joi.string().alphanum().min(3).max(30).required(),
+  name: Joi.string().alphanum().min(3).max(30),
   email: Joi.string().email().required(),
   password: passwordValidation,
   confirmPassword: Joi.string().valid(Joi.ref('password')).required()

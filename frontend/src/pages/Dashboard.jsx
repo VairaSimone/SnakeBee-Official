@@ -9,11 +9,12 @@ import FeedingModal from '../components/FeedingModal.jsx';
 import BreedingModal from '../components/BreedingModal.jsx';
 import ConfirmDeleteModal from '../components/ConfirmDeleteModal.jsx';
 import { FaMars, FaVenus } from 'react-icons/fa';
+import EventModal from '../components/EventModal.jsx';
 
 const Dashboard = () => {
   const user = useSelector(selectUser);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-const [pendingDelete, setPendingDelete] = useState(null);
+  const [pendingDelete, setPendingDelete] = useState(null);
   const [allReptiles, setAllReptiles] = useState([]);
   const [sortedReptiles, setSortedReptiles] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -21,6 +22,10 @@ const [pendingDelete, setPendingDelete] = useState(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [error, setError] = useState(null);
+  const [filterMorph, setFilterMorph] = useState('');
+  const [filterSex, setFilterSex] = useState('');
+  const [filterBreeder, setFilterBreeder] = useState('');
+  const [showEventModal, setShowEventModal] = useState(false);
 
   const [selectedReptile, setSelectedReptile] = useState(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
@@ -53,27 +58,51 @@ const [pendingDelete, setPendingDelete] = useState(null);
       setLoading(false);
     }
   };
+  useEffect(() => {
+    let filtered = [...allReptiles];
+
+    if (filterMorph.trim() !== '') {
+      filtered = filtered.filter(r => r.morph?.toLowerCase().includes(filterMorph.toLowerCase()));
+    }
+
+    if (filterSex) {
+      filtered = filtered.filter(r => r.sex === filterSex);
+    }
+
+    if (filterBreeder !== '') {
+      filtered = filtered.filter(r => r.isBreeder === (filterBreeder === 'true'));
+    }
+
+    const sorted = [...filtered].sort((a, b) => {
+      if (sortKey === 'nextFeedingDate') {
+        return new Date(a.nextFeedingDate) - new Date(b.nextFeedingDate);
+      }
+      return a[sortKey]?.localeCompare(b[sortKey]);
+    });
+
+    setSortedReptiles(sorted);
+  }, [sortKey, allReptiles, filterMorph, filterSex, filterBreeder]);
 
   useEffect(() => {
-      if (user?._id) {
-    fetchReptiles();
-  } else {
-      return (
-    <div className="p-4 text-center">
-      <p className="text-gray-600">Utente non disponibile. Attendere o rifare il login.</p>
-    </div>
-  );
-  }
-}, [user, page]);
-useEffect(() => {
-  const interval = setInterval(() => {
-    if (document.visibilityState === 'visible' && user?._id) {
+    if (user?._id) {
       fetchReptiles();
+    } else {
+      return (
+        <div className="p-4 text-center">
+          <p className="text-gray-600">Utente non disponibile. Attendere o rifare il login.</p>
+        </div>
+      );
     }
-  }, 1000 * 60 * 2); // ogni 2 minuti
+  }, [user, page]);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (document.visibilityState === 'visible' && user?._id) {
+        fetchReptiles();
+      }
+    }, 1000 * 60 * 2); // ogni 2 minuti
 
-  return () => clearInterval(interval); // pulizia
-}, [user]);
+    return () => clearInterval(interval); // pulizia
+  }, [user]);
   useEffect(() => {
     const sorted = [...allReptiles].sort((a, b) => {
       if (sortKey === 'nextFeedingDate') return new Date(a.nextFeedingDate) - new Date(b.nextFeedingDate);
@@ -114,6 +143,45 @@ useEffect(() => {
           <option value="species">Specie</option>
           <option value="nextFeedingDate">Prossimo pasto</option>
         </select>
+
+        <div className="mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-[#2B2B2B] mb-1">Cerca per Morph:</label>
+            <input
+              type="text"
+              value={filterMorph}
+              onChange={(e) => setFilterMorph(e.target.value)}
+              className="block w-full rounded-md border-gray-300 shadow-sm focus:ring-[#228B22] focus:border-[#228B22] bg-white text-[#2B2B2B]"
+              placeholder="Inserisci morph"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-[#2B2B2B] mb-1">Filtro Sesso:</label>
+            <select
+              value={filterSex}
+              onChange={(e) => setFilterSex(e.target.value)}
+              className="block w-full rounded-md border-gray-300 shadow-sm focus:ring-[#228B22] focus:border-[#228B22] bg-white text-[#2B2B2B]"
+            >
+              <option value="">Tutti</option>
+              <option value="M">Maschio</option>
+              <option value="F">Femmina</option>
+              <option value="Unknown">Sconosciuto</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-[#2B2B2B] mb-1">Riproducibili:</label>
+            <select
+              value={filterBreeder}
+              onChange={(e) => setFilterBreeder(e.target.value)}
+              className="block w-full rounded-md border-gray-300 shadow-sm focus:ring-[#228B22] focus:border-[#228B22] bg-white text-[#2B2B2B]"
+            >
+              <option value="">Tutti</option>
+              <option value="true">Solo riproducibili</option>
+              <option value="false">Non riproducibili</option>
+            </select>
+          </div>
+        </div>
+
       </div>
 
       {loading ? (
@@ -134,61 +202,72 @@ useEffect(() => {
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {sortedReptiles.map(reptile => (
-<Link
-  to={`/reptiles/${reptile._id}`}
-  key={reptile._id}
-  className="bg-white rounded-xl shadow p-4 hover:shadow-lg transition cursor-pointer relative block"
->
-  <div className="aspect-w-16 aspect-h-10 mb-2">
-    <img
-      src={reptile.image || 'https://placehold.co/300x200'}
-      alt={reptile.name}
-      className="object-cover w-full h-full rounded"
-    />
-  </div>
-  <div className="flex items-center justify-between">
-    <h3 className="text-xl font-semibold">{reptile.name}</h3>
-    <span title={reptile.gender}>
-      {reptile.sex === 'M' && <FaMars className="text-blue-600" />}
-      {reptile.sex === 'F' && <FaVenus className="text-pink-500" />}
-    </span>
-  </div>
-  <p className="text-sm text-gray-700">Specie: {reptile.species}</p>
-  <p className="text-sm text-gray-700">Morph: {reptile.morph || 'N/A'}</p>
-  <p className="text-sm text-gray-700">
-    Prossimo pasto: {reptile.nextFeedingDate ? new Date(reptile.nextFeedingDate).toLocaleDateString() : 'Nessuno'}
-  </p>
+            <Link
+              to={`/reptiles/${reptile._id}`}
+              key={reptile._id}
+              className="bg-white rounded-xl shadow p-4 hover:shadow-lg transition cursor-pointer relative block"
+            >
+              <div className="aspect-w-16 aspect-h-10 mb-2">
+                <img
+                  src={reptile.image || 'https://res.cloudinary.com/dg2wcqflh/image/upload/v1753088270/sq1upmjw7xgrvpkghotk.png'}
+                  alt={reptile.name}
+                  className="object-cover w-full h-full rounded"
+                />
+              </div>
+              <div className="flex items-center justify-between">
+                <h3 className="text-xl font-semibold">{reptile.name}</h3>
+                <span title={reptile.gender}>
+                  {reptile.sex === 'M' && <FaMars className="text-blue-600" />}
+                  {reptile.sex === 'F' && <FaVenus className="text-pink-500" />}
+                </span>
+              </div>
+              <p className="text-sm text-gray-700">Specie: {reptile.species}</p>
+              <p className="text-sm text-gray-700">Morph: {reptile.morph || 'N/A'}</p>
+              <p className="text-sm text-gray-700">
+                Prossimo pasto: {reptile.nextFeedingDate ? new Date(reptile.nextFeedingDate).toLocaleDateString() : 'Nessuno'}
+              </p>
 
-  <div className="flex gap-2 mt-3">
-    <button
-      onClick={(e) => {
-        e.preventDefault(); e.stopPropagation();
-        setSelectedReptile(reptile); setShowEditModal(true);
-      }}
-      className="flex-1 bg-blue-600 text-white py-1 rounded"
-    >
-      Modifica
-    </button>
-    <button
-      onClick={(e) => {
-        e.preventDefault(); e.stopPropagation();
-        setSelectedReptile(reptile); setShowFeedingModal(true);
-      }}
-      className="flex-1 bg-orange-400 text-white py-1 rounded"
-    >
-      Pasti
-    </button>
-    <button
-      onClick={(e) => {
-        e.preventDefault(); e.stopPropagation();
-        setPendingDelete(reptile); setShowDeleteModal(true);
-      }}
-      className="flex-1 bg-red-500 text-white py-1 rounded"
-    >
-      Elimina
-    </button>
-  </div>
-</Link>
+              <div className="flex gap-2 mt-3">
+                <button
+                  onClick={(e) => {
+                    e.preventDefault(); e.stopPropagation();
+                    setSelectedReptile(reptile); setShowEditModal(true);
+                  }}
+                  className="flex-1 bg-blue-600 text-white py-1 rounded"
+                >
+                  Modifica
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.preventDefault(); e.stopPropagation();
+                    setSelectedReptile(reptile); setShowFeedingModal(true);
+                  }}
+                  className="flex-1 bg-orange-400 text-white py-1 rounded"
+                >
+                  Pasti
+                </button>
+                <button
+  onClick={(e) => {
+    e.preventDefault(); e.stopPropagation();
+    setSelectedReptile(reptile);
+    setShowEventModal(true);
+  }}
+  className="flex-1 bg-purple-600 text-white py-1 rounded"
+>
+  Eventi
+</button>
+
+                <button
+                  onClick={(e) => {
+                    e.preventDefault(); e.stopPropagation();
+                    setPendingDelete(reptile); setShowDeleteModal(true);
+                  }}
+                  className="flex-1 bg-red-500 text-white py-1 rounded"
+                >
+                  Elimina
+                </button>
+              </div>
+            </Link>
 
           ))}
         </div>
@@ -217,7 +296,7 @@ useEffect(() => {
         handleClose={() => setShowEditModal(false)}
         reptile={selectedReptile}
         setReptiles={setAllReptiles}
-          onSuccess={fetchReptiles}
+        onSuccess={fetchReptiles}
 
       />
       <FeedingModal
@@ -230,6 +309,12 @@ useEffect(() => {
         show={showBreedingModal}
         handleClose={() => setShowBreedingModal(false)}
       />
+      <EventModal
+  show={showEventModal}
+  handleClose={() => setShowEventModal(false)}
+  reptileId={selectedReptile?._id}
+/>
+
     </div>
   );
 };

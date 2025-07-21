@@ -15,8 +15,6 @@ const ReptileCreateModal = ({ show, handleClose, setReptiles, onSuccess }) => {
   const [formData, setFormData] = useState({
     name: '', species: '', morph: '', image: null,
     birthDate: '', sex: '', isBreeder: false, notes: '',
-    growthRecords: [{ date: '', weight: '', length: '' }],
-    healthRecords: [{ date: '', note: '', vetVisit: '' }]
   });
 
   const inputClasses = "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#228B22] focus:border-[#228B22] bg-white text-gray-800";
@@ -36,31 +34,15 @@ const ReptileCreateModal = ({ show, handleClose, setReptiles, onSuccess }) => {
       setFormData({
         name: '', species: '', morph: '', image: null,
         birthDate: '', sex: '', isBreeder: false, notes: '',
-        growthRecords: [{ date: '', weight: '', length: '' }],
-        healthRecords: [{ date: '', note: '', vetVisit: '' }]
       });
       setFormErrors({});
       setToastMsg(null);
     }
   }, [show]);
 
-  const handleNestedChange = (list, index, e) => {
-    const { name, value } = e.target;
-    const updated = [...formData[list]];
-    updated[index][name] = value;
-    setFormData({ ...formData, [list]: updated });
-  };
-
-  const addRecord = (list) => {
-    const newRecord = list === 'growthRecords'
-      ? { date: '', weight: '', length: '' }
-      : { date: '', note: '', vetVisit: '' };
-    setFormData({ ...formData, [list]: [...formData[list], newRecord] });
-  };
 
   const validateForm = () => {
     const errors = {};
-    if (!formData.name.trim()) errors.name = 'Il nome è obbligatorio';
     if (!formData.species.trim()) errors.species = 'La specie è obbligatoria';
     if (!formData.sex) errors.sex = 'Il sesso è obbligatorio';
     if (formData.birthDate && new Date(formData.birthDate) > new Date()) errors.birthDate = 'La data non può essere futura';
@@ -70,8 +52,6 @@ const ReptileCreateModal = ({ show, handleClose, setReptiles, onSuccess }) => {
     setFormData({
       name: '', species: '', morph: '', image: null,
       birthDate: '', sex: '', isBreeder: false, notes: '',
-      growthRecords: [{ date: '', weight: '', length: '' }],
-      healthRecords: [{ date: '', note: '', vetVisit: '' }],
     });
     setFormErrors({});
   };
@@ -84,9 +64,7 @@ const ReptileCreateModal = ({ show, handleClose, setReptiles, onSuccess }) => {
     const formDataToSend = new FormData();
     Object.entries(formData).forEach(([key, val]) => {
       if (key === 'image' && val) formDataToSend.append('image', val);
-      else if (['growthRecords', 'healthRecords'].includes(key)) {
-        formDataToSend.append(key, JSON.stringify(val));
-      } else formDataToSend.append(key, val);
+     else formDataToSend.append(key, val);
     });
     formDataToSend.append('user', user._id);
 
@@ -137,8 +115,8 @@ const ReptileCreateModal = ({ show, handleClose, setReptiles, onSuccess }) => {
                 <form onSubmit={handleSubmit} className="space-y-4 mt-4">
                   <div className="grid md:grid-cols-2 gap-4">
                     <div>
-                      <label className={labelClasses}>Nome *</label>
-                      <input type="text" name="name" value={formData.name} onChange={handleChange} className={inputClasses} required />
+                      <label className={labelClasses}>Nome</label>
+                      <input type="text" name="name" value={formData.name} onChange={handleChange} className={inputClasses} />
                       {formErrors.name && <p className="text-red-600 text-sm">{formErrors.name}</p>}
                     </div>
                     <div>
@@ -147,11 +125,11 @@ const ReptileCreateModal = ({ show, handleClose, setReptiles, onSuccess }) => {
                       {formErrors.species && <p className="text-red-600 text-sm">{formErrors.species}</p>}
                     </div>
                     <div>
-                      <label className={labelClasses}>Morph</label>
-                      <input type="text" name="morph" value={formData.morph} onChange={handleChange} className={inputClasses} />
+                      <label className={labelClasses}>Morph *</label>
+                      <input type="text" name="morph" value={formData.morph} onChange={handleChange} className={inputClasses} required/>
                     </div>
                     <div>
-                      <label className={labelClasses}>Data di nascita</label>
+                      <label className={labelClasses}>Data di nascita *</label>
                       <input type="date" name="birthDate" value={formData.birthDate} onChange={handleChange} className={`${inputClasses} text-sm`} />
                     </div>
                     <div>

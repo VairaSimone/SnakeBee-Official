@@ -6,6 +6,8 @@ import { validateReptile } from '../validate/validateReptile.js';
 import  upload  from '../config/MulterConfig.js';
 import { auditLogger } from '../middlewares/auditLogger.js';
 import Reptile from '../models/Reptile.js';
+import { GetEvents, CreateEvent, DeleteEvent } from '../controllers/EventController.js';
+import { exportReptileData } from '../controllers/ExportReptileData.js';
 
 const reptileRouter = express.Router();
 
@@ -16,4 +18,9 @@ reptileRouter.post('/', authenticateJWT, upload.single('image'), reptileControll
 reptileRouter.put('/:reptileId', authenticateJWT, auditLogger('UPDATE_REPTILE'), upload.single('image'), validateReptile, isOwnerOrAdmin(Reptile, 'reptileId'), reptileController.PutReptile);
 reptileRouter.delete('/:reptileId', authenticateJWT, auditLogger('DELETE_REPTILE'), isOwnerOrAdmin(Reptile, 'reptileId'), reptileController.DeleteReptile);
 
+reptileRouter.get('/export/reptiles/:userId', authenticateJWT, exportReptileData);
+
+reptileRouter.get('/events/:reptileId',authenticateJWT,  GetEvents);
+reptileRouter.post('/events', authenticateJWT,   CreateEvent);
+reptileRouter.delete('/events/:eventId',authenticateJWT,   DeleteEvent);
 export default reptileRouter;

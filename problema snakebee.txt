@@ -9,3 +9,8 @@ EditReptile
 
 Feeding
 - nella data cliccando sopra non appare il quadratino con il calendario. appare se clicchi nel bianco tutto a destra, ma non va bene
+
+
+
+mettere che può scaricare un pdf o excel
+cambiare imagine di preview rettili

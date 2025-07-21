@@ -6,7 +6,7 @@ import Notification from "../models/Notification.js";
 import fs from 'fs/promises';
 import streamifier from 'streamifier';
 
-import { parseGrowthRecords, parseHealthRecords, parseDateOrNull } from '../utils/parseReptileHelpers.js';
+import { parseDateOrNull } from '../utils/parseReptileHelpers.js';
 
 export const GetAllReptile = async (req, res) => {
     try {
@@ -80,7 +80,7 @@ export const GetAllReptileByUser = async (req, res) => {
 
 export const PostReptile = async (req, res) => {
     try {
-        const { name, species, morph, birthDate, growthRecords, healthRecords, sex, isBreeder, notes } = req.body;
+        const { name, species, morph, birthDate, sex, isBreeder, notes } = req.body;
         const userId = req.user.userid;
 
         // Controllo limite massimo
@@ -117,8 +117,6 @@ export const PostReptile = async (req, res) => {
 
         }
 
-        const parsedGrowthRecords = parseGrowthRecords(growthRecords);
-        const parsedHealthRecords = parseHealthRecords(healthRecords);
         const birthDateObject = parseDateOrNull(birthDate);
         const newReptile = new Reptile({
             _id: new mongoose.Types.ObjectId(),
@@ -128,8 +126,6 @@ export const PostReptile = async (req, res) => {
             user: userId,
             image: imageUrl,
             birthDate: birthDateObject,
-            growthRecords: parsedGrowthRecords,
-            healthRecords: parsedHealthRecords,
             sex,
             isBreeder,
             notes,
@@ -147,7 +143,7 @@ export const PostReptile = async (req, res) => {
 export const PutReptile = async (req, res) => {
     try {
         const id = req.params.reptileId;
-        const { name, species, morph, sex, notes, birthDate, isBreeder, growthRecords, healthRecords } = req.body;
+        const { name, species, morph, sex, notes, birthDate, isBreeder } = req.body;
 
         let reptile = await Reptile.findById(id);
 
@@ -183,8 +179,6 @@ if (req.file) {
             return Number(value);
         };
 
-        const parsedGrowthRecords = parseGrowthRecords(growthRecords) || reptile.growthRecords;
-        const parsedHealthRecords = parseHealthRecords(healthRecords) || reptile.healthRecords;
         const birthDateObject = birthDate ? new Date(birthDate) : reptile.birthDate;
 
         reptile.name = name || reptile.name;
@@ -192,8 +186,6 @@ if (req.file) {
         reptile.morph = morph || reptile.morph;
         reptile.birthDate = birthDateObject;
         reptile.image = imageUrl;
-        reptile.growthRecords = parsedGrowthRecords;
-        reptile.healthRecords = parsedHealthRecords;
         reptile.sex = sex || reptile.sex;
 reptile.isBreeder = isBreeder === 'true' || isBreeder === true;
         reptile.notes = notes || reptile.notes;

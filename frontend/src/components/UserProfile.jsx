@@ -224,7 +224,28 @@ if (!passwordRegex.test(newPassword)) {
       setNotificationMsg('Errore aggiornamento.');
       addToast('Errore nelle preferenze.', 'error');
     }
-  };
+  };const handleExportExcel = async () => {
+  try {
+    const response = await api.get(`reptile/export/reptiles/${user._id}`, {
+      responseType: 'blob', // Fondamentale per gestire i file binari!
+    });
+
+    // Crea un link temporaneo per il download
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', 'reptile_data.xlsx');
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    addToast('Download avviato con successo!');
+  } catch (err) {
+    console.error(err);
+    addToast('Errore durante il download del file.', 'error');
+  }
+};
+
 
   if (!user) return <div className="text-center mt-10">Caricamento profilo...</div>;
 
@@ -240,7 +261,7 @@ if (!passwordRegex.test(newPassword)) {
           </div>
 
           <div className="text-center">
-            <img src={avatarPreview || 'https://via.placeholder.com/150'} alt="Avatar" className="w-24 h-24 rounded-full mx-auto border-4 border-[#FFD700]" />
+            <img src={avatarPreview || 'https://res.cloudinary.com/dg2wcqflh/image/upload/v1753088270/sq1upmjw7xgrvpkghotk.png'} alt="Avatar" className="w-24 h-24 rounded-full mx-auto border-4 border-[#FFD700]" />
             <h3 className="mt-2 text-lg font-medium">{name}</h3>
             <p className="text-sm text-gray-500">{email}</p>
           </div>
@@ -370,6 +391,20 @@ if (!passwordRegex.test(newPassword)) {
             </button>
           </div>
 
+          <hr className="border-t" />
+{/* Esporta dati in Excel */}
+<div>
+  <h3 className="text-xl font-semibold text-[#2B2B2B]">Esporta i tuoi dati</h3>
+  <p className="text-sm text-gray-500 mb-2">
+    Scarica un file Excel con tutti i dati dei tuoi rettili, alimentazioni, eventi e riproduzioni.
+  </p>
+  <button
+    onClick={handleExportExcel}
+    className="bg-[#1E90FF] text-white px-4 py-2 rounded hover:bg-blue-700"
+  >
+    Scarica Excel
+  </button>
+</div>
           <hr className="border-t" />
 
           {/* Elimina account */}

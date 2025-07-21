@@ -44,7 +44,7 @@ const Footer = () => {
 
       {/* Copyright */}
       <div className="mt-10 text-center text-sm border-t border-[#d0caba] pt-4">
-        © 2024 SnakeBee. Tutti i diritti riservati.
+        © 2025 SnakeBee. Tutti i diritti riservati.
       </div>
     </footer>
   );

@@ -2,6 +2,9 @@ import User from "../models/User.js";
 import Reptile from "../models/Reptile.js";
 import Feeding from "../models/Feeding.js";
 import Notification from "../models/Notification.js";
+import Event from '../models/Event.js';
+import Breeding from '../models/Breeding.js';
+
 import RevokedToken from "../models/RevokedToken.js";
 import jwt from "jsonwebtoken";
 import cloudinary from '../config/CloudinaryConfig.js'; // Assicurati che questo sia l'import giusto
@@ -116,25 +119,36 @@ export const updateEmailPreferences = async (req, res) => {
     res.status(500).json({ message: 'Errore del server' });
   }
 };
+
 export const DeleteUser = async (req, res) => {
     try {
         const userId = req.params.userId;
         const user = await User.findById(userId);
-        if (!user) return res.status(404).json({ message: 'User not found' });
+        if (!user) return res.status(404).json({ message: 'Utente non trovato' });
 
+        // Trova tutti i rettili dell'utente
         const reptiles = await Reptile.find({ user: userId });
 
+        // Per ogni rettile elimina feedings, eventi, notifiche
         for (const reptile of reptiles) {
             await Feeding.deleteMany({ reptile: reptile._id });
+            await Event.deleteMany({ reptile: reptile._id });
             await Notification.deleteMany({ reptile: reptile._id });
         }
 
+        // Elimina i rettili
         await Reptile.deleteMany({ user: userId });
 
+        // Elimina riproduzioni legate all'utente
+        await Breeding.deleteMany({ user: userId });
+
+        // Elimina notifiche dell'utente
         await Notification.deleteMany({ user: userId });
 
+        // Elimina utente
         await User.findByIdAndDelete(userId);
 
+        // Revoca token se presente
         const token = req.header('Authorization')?.split(' ')[1];
         if (token) {
             const decoded = jwt.decode(token);
@@ -147,9 +161,9 @@ export const DeleteUser = async (req, res) => {
             }
         }
 
-        return res.status(200).json({ message: 'User and associated data successfully deleted' });
+        return res.status(200).json({ message: 'Utente e dati collegati eliminati con successo' });
     } catch (error) {
-        console.log(error);
-        return res.status(500).json({ message: 'Server error' });
+        console.error('Errore durante l\'eliminazione dell\'utente:', error);
+        return res.status(500).json({ message: 'Errore del server' });
     }
 };

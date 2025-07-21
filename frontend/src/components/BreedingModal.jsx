@@ -14,8 +14,14 @@ const currentYear = new Date().getFullYear();
 const hatchlingSchema = yup.object({
   morph: yup.string().required('Morph è richiesto'),
   sex: yup.string().oneOf(['M', 'F', 'U']).required('Sesso è richiesto'),
-  weight: yup.number().positive('Peso deve essere positivo').required('Peso è richiesto'),
-});
+weight: yup
+  .number()
+  .transform((value, originalValue) =>
+    String(originalValue).trim() === '' ? null : Number(originalValue)
+  )
+  .typeError('Peso deve essere un numero')
+  .positive('Peso deve essere positivo')
+  .required('Peso è richiesto'),});
 
 const schema = yup.object({
   male: yup.string().required('Maschio obbligatorio'),
@@ -31,21 +37,26 @@ const schema = yup.object({
       type: yup.string().oneOf(eventTypes.map(e => e.value)).required(),
       date: yup
         .date()
+        .transform((value, originalValue) => originalValue === '' ? null : value)
         .required('Data evento obbligatoria')
         .min(new Date(currentYear, 0, 1), `Data non può essere prima del ${currentYear}`) // minimo 1 gennaio anno corrente
-            .max(new Date(currentYear, 11, 31), `La data non può essere dopo il ${currentYear}`) // massimo 31 dicembre anno corrente
-            .typeError('Data evento non valida'),
+        .max(new Date(currentYear, 11, 31), `La data non può essere dopo il ${currentYear}`) // massimo 31 dicembre anno corrente
+        .typeError('Data evento non valida'),
     })
   ).min(1, 'Almeno un evento richiesto'),
-  hatchlings: yup.array().of(hatchlingSchema),
-});
+ hatchlings: yup.array().of(hatchlingSchema)
+    .when('events', {
+      is: (events) => events?.some(e => e.type === 'birth'),
+      then: (schema) => schema.min(1, 'Almeno un cucciolo è richiesto se c’è un evento di nascita'),
+      otherwise: (schema) => schema.max(0),
+    }),});
 
 const BreedingModal = ({ show, handleClose, refresh, seasonOpen }) => {
   const user = useSelector(selectUser);
   const [reptiles, setReptiles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-const [saveSuccess, setSaveSuccess] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
 
   const modalRef = useRef(null);
 
@@ -60,9 +71,16 @@ const [saveSuccess, setSaveSuccess] = useState(false);
       hatchlings: []
     }
   });
+  const eventsWatch = watch('events');
+  const hasBirthEvent = eventsWatch.some(e => e.type === 'birth'); // o 'birth' se usi altro nome
 
   const { fields: events, append: addEvent, remove: removeEvent } = useFieldArray({ control, name: 'events' });
   const { fields: hatchlings, append: addHatchling, remove: removeHatchling } = useFieldArray({ control, name: 'hatchlings' });
+useEffect(() => {
+  if (!hasBirthEvent && hatchlings.length > 0) {
+    reset(prev => ({ ...prev, hatchlings: [] }));
+  }
+}, [hasBirthEvent, hatchlings.length, reset]);
 
   // Blocco modifica seasonYear forzando valore a currentYear se viene cambiato (anche se disabilitato)
   useEffect(() => {
@@ -125,23 +143,30 @@ const [saveSuccess, setSaveSuccess] = useState(false);
       const res = await api.post('/breeding', payload);
       console.log('POST /breeding response:', payload);
       const id = res.breeding._id;
-console.log('RESPONSE:', res); // verifica se contiene breeding._id
+      console.log('RESPONSE:', res); // verifica se contiene breeding._id
 
       // aggiungo eventi extra e cuccioli
       await Promise.all(
         data.events.filter(e => e.type !== 'pairing')
           .map(e => api.post(`/breeding/${id}/events`, e))
       );
-setSaveSuccess(true);
+      setSaveSuccess(true);
 
       toast.success('Dati salvati con successo');
       reset();
+      handleClose()
     } catch {
       toast.error('Errore salvataggio');
     } finally {
       setSubmitting(false);
     }
   };
+  useEffect(() => {
+    console.log('Form errors:', errors);
+    console.log('Form isValid:', isValid);
+  }, [errors, isValid]);
+
+
   if (!show) return null;
 
   return (
@@ -160,15 +185,21 @@ setSaveSuccess(true);
 
         {loading && <p className="text-center">Caricamento rettili...</p>}
         {!loading && reptiles.length === 0 && <p className="text-red-600">Nessun rettile disponibile</p>}
+        {Object.keys(errors).length > 0 && !isValid && !submitting && (
+          <div className="bg-red-100 border-l-4 border-red-600 text-red-900 p-4 rounded mb-6 text-center text-lg font-semibold shadow-md">
+            ⚠️ Alcuni campi sono invalidi. Controlla i messaggi di errore in rosso.
+          </div>
+        )}
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mt-4" noValidate>
-{saveSuccess && (
-  <div className="bg-green-100 border-l-4 border-green-600 text-green-900 p-4 rounded mb-6 text-center text-lg font-semibold shadow-md">
-    ✅ Dati salvati correttamente!
-  </div>
-)}
+          {saveSuccess && (
+            <div className="bg-green-100 border-l-4 border-green-600 text-green-900 p-4 rounded mb-6 text-center text-lg font-semibold shadow-md">
+              ✅ Dati salvati correttamente!
+            </div>
+          )}
           {/* Selezione maschio/femmina */}
           <div className="bg-white text-black grid grid-cols-2 gap-4">
+
             {['male', 'female'].map(role => (
               <div key={role}>
                 <label className="capitalize">{role}</label>
@@ -182,7 +213,9 @@ setSaveSuccess(true);
                     .filter(r => r.isBreeder === true)
                     .filter(r => (role === 'male' ? r.sex === 'M' : r.sex === 'F'))
                     .map(r => (
-                      <option key={r._id} value={r._id}>{r.name}</option>
+                      <option key={r._id} value={r._id}>
+                        {r.morph} ({r.sex})
+                      </option>
                     ))}
                 </select>
                 {errors[role] && <p className="text-red-600">{errors[role].message}</p>}
@@ -271,57 +304,58 @@ setSaveSuccess(true);
           </div>
 
           {/* Cuccioli */}
-          <div>
-            <label className="font-medium">Cuccioli</label>
-            {hatchlings.map((f, i) => (
-              <div key={f.id} className="bg-white text-black flex items-end gap-2 mb-2">
-                <input
-                  placeholder="Morph"
-                  {...register(`hatchlings.${i}.morph`)}
-                  disabled={!seasonOpen}
-                  className="bg-white text-black border p-2 rounded"
-                />
-                <input
-                  type="number"
-                  placeholder="Peso g"
-                  {...register(`hatchlings.${i}.weight`)}
-                  disabled={!seasonOpen}
-                  className="bg-white text-black border p-2 rounded"
-                />
-                <select
-                  {...register(`hatchlings.${i}.sex`)}
-                  disabled={!seasonOpen}
-                  className="bg-white text-black border p-2 rounded"
-                >
-                  <option value="">Sesso</option>
-                  {sexOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-                </select>
-                {seasonOpen && (
-                  <button type="button" onClick={() => removeHatchling(i)} className="text-red-600 text-xl">✕</button>
-                )}
 
-                {/* Errori */}
-                {errors.hatchlings?.[i]?.morph && <p className="text-red-600">{errors.hatchlings[i].morph.message}</p>}
-              </div>
-            ))}
+{hasBirthEvent && (
+  <div>
+    <label className="font-medium">Cuccioli</label>
+    {hatchlings.map((f, i) => (
+      <div key={f.id} className="bg-white text-black flex items-end gap-2 mb-2">
+        <input
+          placeholder="Morph"
+          {...register(`hatchlings.${i}.morph`)}
+          disabled={!seasonOpen}
+          className="bg-white text-black border p-2 rounded"
+        />
+        <input
+          type="number"
+          placeholder="Peso g"
+          {...register(`hatchlings.${i}.weight`)}
+          disabled={!seasonOpen}
+          className="bg-white text-black border p-2 rounded"
+        />
+        <select
+          {...register(`hatchlings.${i}.sex`)}
+          disabled={!seasonOpen}
+          className="bg-white text-black border p-2 rounded"
+        >
+          <option value="">Sesso</option>
+          {sexOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+        </select>
+        {seasonOpen && (
+          <button type="button" onClick={() => removeHatchling(i)} className="text-red-600 text-xl">✕</button>
+        )}
 
-            {seasonOpen && (
-              <button
-                type="button"
-                onClick={() => addHatchling({ morph: '', weight: '', sex: 'U' })}
-                className="text-blue-600 mt-2"
-              >
-                + cucciolo
-              </button>
-            )}
-          </div>
+        {/* Errori */}
+        {errors.hatchlings?.[i]?.morph && <p className="text-red-600">{errors.hatchlings[i].morph.message}</p>}
+      </div>
+    ))}
+
+    {seasonOpen && (
+      <button
+        type="button"
+        onClick={() => addHatchling({ morph: '', weight: '', sex: 'U' })}
+        className="text-blue-600 mt-2"
+      >
+        + cucciolo
+      </button>
+    )}
+  </div>
+)}
 
           <button
             type="submit"
-            disabled={!isValid || !seasonOpen || submitting}
-            className={`py-3 px-6 rounded w-full font-semibold ${isValid && seasonOpen && !submitting
-              ? 'bg-green-600 hover:bg-green-700 text-white'
-              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            disabled={!seasonOpen || submitting}
+            className={`py-3 px-6 rounded w-full font-semibold bg-green-600 hover:bg-green-700 text-white
               }`}
           >
             {submitting ? 'Salvando...' : 'Salva'}

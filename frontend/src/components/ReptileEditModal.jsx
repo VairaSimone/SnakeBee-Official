@@ -5,7 +5,6 @@ const ReptileEditModal = ({ show, handleClose, reptile, setReptiles, onSuccess }
   const [formData, setFormData] = useState({
     name: '', species: '', morph: '', image: '',
     birthDate: '', sex: '', isBreeder: false, notes: '',
-    growthRecords: [], healthRecords: []
   });
   const [loading, setLoading] = useState(false);
   const [toastMsg, setToastMsg] = useState(null);
@@ -22,8 +21,6 @@ const ReptileEditModal = ({ show, handleClose, reptile, setReptiles, onSuccess }
         sex: reptile.sex || '',
         isBreeder: !!reptile.isBreeder, // ⬅ assicurati che sia booleano
         notes: reptile.notes || '',
-        growthRecords: reptile.growthRecords || [],
-        healthRecords: reptile.healthRecords || []
       });
     }
   }, [reptile]);
@@ -119,10 +116,10 @@ useEffect(() => {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Nome" required className="border p-2 rounded bg-white text-black w-full" />
+            <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Nome" className="border p-2 rounded bg-white text-black w-full" />
             <input type="text" name="species" value={formData.species} onChange={handleChange} placeholder="Specie" required className="border p-2 rounded bg-white text-black w-full" />
-            <input type="text" name="morph" value={formData.morph} onChange={handleChange} placeholder="Morph" className="border p-2 rounded bg-white text-black w-full" />
-            <input type="date" name="birthDate" value={formData.birthDate} onChange={handleChange} className="border p-2 rounded bg-white text-black w-full cursor-pointer" />
+            <input type="text" name="morph" value={formData.morph} onChange={handleChange} placeholder="Morph" required className="border p-2 rounded bg-white text-black w-full" />
+            <input type="date" name="birthDate" value={formData.birthDate} required onChange={handleChange} className="border p-2 rounded bg-white text-black w-full cursor-pointer" />
             <select name="sex" value={formData.sex} onChange={handleChange} className="border p-2 rounded bg-white text-black w-full">
               <option value="">Seleziona sesso</option>
               <option value="M">Maschio</option>

@@ -28,6 +28,11 @@ const userSchema = new Schema(
             enum: ['user', 'admin'],
             default: "user"
         },
+        verificationEmailAttempts: {
+  type: Number,
+  default: 0,
+},
+
         isVerified: {
             type: Boolean,
             default: false
