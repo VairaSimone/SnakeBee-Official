@@ -29,8 +29,6 @@ const schema = yup.object({
 const BreedingEditModal = ({ breeding, show, handleClose, refresh }) => {
   const modalRef = useRef(null);
   const [loading, setLoading] = useState(false);
-const watchedEvents = useWatch({ control, name: 'events' });
-const hasBirthEvent = watchedEvents?.some(e => e?.type === 'birth');
 
   const { register, control, handleSubmit, reset, formState: { errors, isValid } } = useForm({
     resolver: yupResolver(schema),
@@ -42,19 +40,13 @@ const hasBirthEvent = watchedEvents?.some(e => e?.type === 'birth');
     }
   });
 
+  const watchedEvents = useWatch({ control, name: 'events' });
+const hasBirthEvent = watchedEvents?.some(e => e?.type === 'birth');
+
   const { fields: events, append: addEvent, remove: removeEvent } = useFieldArray({ control, name: 'events' });
   const { fields: hatchlings, append: addHatchling, remove: removeHatchling } = useFieldArray({ control, name: 'hatchlings' });
 
   // Chiudi modale cliccando fuori
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (modalRef.current && !modalRef.current.contains(event.target)) {
-        handleClose();
-      }
-    };
-    if (show) document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [show]);
 
   useEffect(() => {
     if (show && breeding) {
@@ -113,7 +105,7 @@ return (
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-center p-4">
+<div className="flex min-h-screen items-start md:items-center justify-center p-4 overflow-y-auto">
             <Transition.Child
               as={Fragment}
               enter="ease-out duration-300"

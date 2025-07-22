@@ -19,7 +19,7 @@ const ConfirmDeleteModal = ({ show, onClose, onConfirm, reptile }) => {
         </Transition.Child>
 
         {/* Modal container */}
-        <div className="fixed inset-0 overflow-y-auto">
+<div className="fixed inset-0 flex items-center justify-center p-4 overflow-hidden">
           <div className="flex min-h-full items-center justify-center p-4 text-center">
             {/* Modal panel */}
             <Transition.Child
@@ -31,7 +31,7 @@ const ConfirmDeleteModal = ({ show, onClose, onConfirm, reptile }) => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 shadow-xl transition-all relative">
+<Dialog.Panel className="w-full max-w-md max-h-[90vh] overflow-y-auto transform overflow-hidden rounded-2xl bg-white p-6 shadow-xl transition-all relative">
                 <Dialog.Title className="text-lg font-semibold text-gray-800">Conferma eliminazione</Dialog.Title>
                 
                 {/* Messaggio */}
