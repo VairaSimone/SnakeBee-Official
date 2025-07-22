@@ -7,7 +7,7 @@ const PrivacyPolicy = () => {
       <p className="mb-4"><strong>Ultimo aggiornamento:</strong> 21 luglio 2025</p>
 
       <h2 className="text-xl font-semibold mt-6 mb-2">1. Titolare del trattamento</h2>
-      <p>Il Titolare del trattamento è <strong>SnakeBee di Simone [Cognome]</strong>, con sede legale in Torino, Italia. Per qualsiasi richiesta: <a className="text-blue-600 underline" href="mailto:privacy@snakebee.it">privacy@snakebee.it</a></p>
+      <p>Il Titolare del trattamento è <strong>SnakeBee di Simone [Cognome]</strong>, con sede legale in Torino, Italia. Per qualsiasi richiesta: <a className="text-blue-600 underline" href="mailto:info@snakebee.it">info@snakebee.it</a></p>
 
       <h2 className="text-xl font-semibold mt-6 mb-2">2. Tipi di dati raccolti</h2>
       <ul className="list-disc pl-6 mb-4">
@@ -59,7 +59,7 @@ const PrivacyPolicy = () => {
       </table>
 
       <h2 className="text-xl font-semibold mt-6 mb-2">8. Diritti dell’utente</h2>
-      <p>Puo richiedere accesso, modifica, cancellazione, portabilità, revoca del consenso e presentare reclami al Garante. Scrivi a <a href="mailto:privacy@snakebee.it" className="text-blue-600 underline">privacy@snakebee.it</a></p>
+      <p>Puo richiedere accesso, modifica, cancellazione, portabilità, revoca del consenso e presentare reclami al Garante. Scrivi a <a href="mailto:info@snakebee.it" className="text-blue-600 underline">info@snakebee.it</a></p>
 
       <h2 className="text-xl font-semibold mt-6 mb-2">9. Età minima</h2>
       <p>La registrazione è consentita solo ai maggiori di 14 anni. Non è attualmente previsto il consenso genitoriale automatico.</p>
@@ -115,7 +115,7 @@ const PrivacyPolicy = () => {
       <p>Puoi gestire o eliminare i cookie direttamente dalle impostazioni del tuo browser.</p>
 
       <h2 className="text-xl font-semibold mt-6 mb-2">6. Contatti</h2>
-      <p>Per dubbi sui cookie scrivi a: <a className="text-blue-600 underline" href="mailto:privacy@snakebee.it">privacy@snakebee.it</a></p>
+      <p>Per dubbi sui cookie scrivi a: <a className="text-blue-600 underline" href="mailto:info@snakebee.it">info@snakebee.it</a></p>
     </div>
   );
 };

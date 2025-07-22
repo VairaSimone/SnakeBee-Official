@@ -29,11 +29,8 @@ const Footer = () => {
         <div>
           <h5 className="text-xl font-semibold font-poppins mb-4">Seguici</h5>
           <div className="flex space-x-4 text-2xl">
-            <a href="https://facebook.com" aria-label="Facebook" className="hover:text-[#FFD700] transition">
+            <a href="https://www.facebook.com/profile.php?id=61578296802324" aria-label="Facebook" className="hover:text-[#FFD700] transition">
               <i className="fab fa-facebook-f"></i>
-            </a>
-            <a href="https://twitter.com" aria-label="Twitter" className="hover:text-[#FFD700] transition">
-              <i className="fab fa-twitter"></i>
             </a>
             <a href="https://instagram.com" aria-label="Instagram" className="hover:text-[#FFD700] transition">
               <i className="fab fa-instagram"></i>
