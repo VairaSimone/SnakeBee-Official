@@ -6,7 +6,8 @@ import api from '../services/api';
 import { toast } from 'react-toastify';
 import { eventTypes, sexOptions } from '../utils/constantsBreeding';
 import { validateDatesSequence } from '../utils/validateDatesSequence';
-
+import { Dialog, Transition } from '@headlessui/react';
+import { Fragment, useEffect, useRef, useState } from 'react';
 const hatchlingSchema = yup.object({
   morph: yup.string().required('Morph è richiesto'),
   sex: yup.string().oneOf(['M', 'F', 'U']).required('Sesso è richiesto'),
@@ -95,143 +96,154 @@ const BreedingEditModal = ({ breeding, show, handleClose, refresh }) => {
 
   if (!show || !breeding) return null;
 return (
-  <div className="fixed inset-0 bg-black/50 flex justify-center items-center p-2 sm:p-4 z-50">
-    <div
-      ref={modalRef}
-      className="bg-white text-black rounded-xl p-4 sm:p-6 w-full max-w-3xl max-h-[90vh] overflow-y-auto"
-    >
-      <button onClick={handleClose} className="float-right text-2xl">×</button>
-      <h3 className="text-xl sm:text-2xl font-bold mb-4">Modifica Riproduzione</h3>
-
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        {/* Eventi */}
-        <div>
-          <label className="font-medium">Eventi</label>
-          {events.map((field, idx) => (
-            <div key={field.id} className="flex flex-col sm:flex-row sm:items-end gap-2 mb-2">
-              <select
-                {...register(`events.${idx}.type`)}
-                className="bg-white text-black border p-2 rounded w-full sm:w-1/3"
-              >
-                {eventTypes.map(e => (
-                  <option key={e.value} value={e.value}>{e.label}</option>
-                ))}
-              </select>
-
-              <input
-                type="date"
-                {...register(`events.${idx}.date`)}
-                className="bg-white text-black border p-2 rounded w-full sm:w-1/3"
-              />
-
-              <input
-                type="text"
-                placeholder="Note"
-                {...register(`events.${idx}.notes`)}
-                className="bg-white text-black border p-2 rounded w-full sm:w-1/3"
-              />
-
-              <button
-                type="button"
-                onClick={() => removeEvent(idx)}
-                className="text-red-600 text-xl"
-              >
-                ✕
-              </button>
-            </div>
-          ))}
-
-          <select
-            onChange={e => {
-              if (!e.target.value) return;
-              addEvent({ type: e.target.value, date: '', notes: '' });
-              e.target.value = '';
-            }}
-            className="bg-white text-black border p-2 rounded mt-2 w-full sm:w-auto"
-          >
-            <option value="">+ Aggiungi evento</option>
-            {eventTypes.map(e => (
-              <option key={e.value} value={e.value}>{e.label}</option>
-            ))}
-          </select>
-        </div>
-
-        {/* Cuccioli */}
-        <div>
-          <label className="font-medium">Cuccioli</label>
-          {hatchlings.map((f, i) => (
-            <div key={f.id} className="flex flex-col sm:flex-row sm:items-end gap-2 mb-2">
-              <input
-                placeholder="Morph"
-                {...register(`hatchlings.${i}.morph`)}
-                className="bg-white text-black border p-2 rounded w-full sm:w-1/3"
-              />
-
-              <input
-                type="number"
-                placeholder="Peso (g)"
-                {...register(`hatchlings.${i}.weight`)}
-                className="bg-white text-black border p-2 rounded w-full sm:w-1/3"
-              />
-
-              <select
-                {...register(`hatchlings.${i}.sex`)}
-                className="bg-white text-black border p-2 rounded w-full sm:w-1/3"
-              >
-                <option value="">Sesso</option>
-                {sexOptions.map(opt => (
-                  <option key={opt.value} value={opt.value}>{opt.label}</option>
-                ))}
-              </select>
-
-              <button
-                type="button"
-                onClick={() => removeHatchling(i)}
-                className="text-red-600 text-xl"
-              >
-                ✕
-              </button>
-            </div>
-          ))}
-
-          <button
-            type="button"
-            onClick={() => addHatchling({ morph: '', weight: '', sex: 'U' })}
-            className="text-blue-600 mt-2"
-          >
-            + Cucciolo
-          </button>
-        </div>
-
-        {/* Note */}
-        <div>
-          <label>Note generali</label>
-          <textarea
-            {...register('notes')}
-            className="bg-white text-black border p-2 rounded w-full"
-            rows={3}
-          />
-          {errors.notes && (
-            <p className="text-red-600">{errors.notes.message}</p>
-          )}
-        </div>
-
-        <button
-          type="submit"
-          disabled={!isValid || loading}
-          className={`py-3 px-6 rounded w-full font-semibold ${
-            isValid
-              ? 'bg-green-600 hover:bg-green-700 text-white'
-              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-          }`}
+<Transition show={show} as={Fragment}>
+      <Dialog as="div" className="relative z-50" onClose={handleClose}>
+        <Transition.Child
+          as={Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
         >
-          {loading ? 'Salvataggio in corso...' : 'Salva modifiche'}
-        </button>
-      </form>
-    </div>
-  </div>
-);
+          <div className="fixed inset-0 bg-black bg-opacity-25" />
+        </Transition.Child>
 
+        <div className="fixed inset-0 overflow-y-auto">
+          <div className="flex min-h-full items-center justify-center p-4">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 scale-95"
+              enterTo="opacity-100 scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-95"
+            >
+              <Dialog.Panel className="w-full max-w-3xl transform overflow-hidden rounded-2xl bg-white p-6 shadow-xl transition-all">
+                <Dialog.Title className="text-xl font-semibold text-gray-800">Modifica Riproduzione</Dialog.Title>
+                <button
+                  onClick={handleClose}
+                  className="absolute top-4 right-4 text-gray-500 hover:text-red-600 text-xl"
+                >
+                  &times;
+                </button>
+
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 mt-4">
+
+                  {/* Eventi */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-800 mb-1">Eventi</label>
+                    {events.map((field, idx) => (
+                      <div key={field.id} className="grid md:grid-cols-4 gap-2 mb-2">
+                        <select {...register(`events.${idx}.type`)} className="border p-2 rounded text-sm">
+                          {eventTypes.map(e => (
+                            <option key={e.value} value={e.value}>{e.label}</option>
+                          ))}
+                        </select>
+
+                        <input type="date" {...register(`events.${idx}.date`)} className="border p-2 rounded text-sm" />
+                        <input type="text" placeholder="Note" {...register(`events.${idx}.notes`)} className="border p-2 rounded text-sm" />
+
+                        <button type="button" onClick={() => removeEvent(idx)} className="text-red-600 text-xl">✕</button>
+                      </div>
+                    ))}
+
+                    <select
+                      onChange={e => {
+                        if (!e.target.value) return;
+                        addEvent({ type: e.target.value, date: '', notes: '' });
+                        e.target.value = '';
+                      }}
+                      className="border p-2 rounded text-sm mt-2"
+                    >
+                      <option value="">+ Aggiungi evento</option>
+                      {eventTypes.map(e => (
+                        <option key={e.value} value={e.value}>{e.label}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Cuccioli */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-800 mb-1">Cuccioli</label>
+                    {hatchlings.map((f, i) => (
+                      <div key={f.id} className="grid md:grid-cols-4 gap-2 mb-2">
+                        <input
+                          placeholder="Morph"
+                          {...register(`hatchlings.${i}.morph`)}
+                          className="border p-2 rounded text-sm"
+                        />
+
+                        <input
+                          type="number"
+                          placeholder="Peso (g)"
+                          {...register(`hatchlings.${i}.weight`)}
+                          className="border p-2 rounded text-sm"
+                        />
+
+                        <select
+                          {...register(`hatchlings.${i}.sex`)}
+                          className="border p-2 rounded text-sm"
+                        >
+                          <option value="">Sesso</option>
+                          {sexOptions.map(opt => (
+                            <option key={opt.value} value={opt.value}>{opt.label}</option>
+                          ))}
+                        </select>
+
+                        <button
+                          type="button"
+                          onClick={() => removeHatchling(i)}
+                          className="text-red-600 text-xl"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+
+                    <button
+                      type="button"
+                      onClick={() => addHatchling({ morph: '', weight: '', sex: 'U' })}
+                      className="text-blue-600 mt-2 text-sm"
+                    >
+                      + Cucciolo
+                    </button>
+                  </div>
+
+                  {/* Note */}
+                  <div>
+                    <label className="block text-sm font-medium text-gray-800 mb-1">Note generali</label>
+                    <textarea
+                      {...register('notes')}
+                      className="border p-2 rounded w-full text-sm"
+                      rows={3}
+                    />
+                    {errors.notes && <p className="text-red-600 text-sm mt-1">{errors.notes.message}</p>}
+                  </div>
+
+                  <div className="text-right">
+                    <button
+                      type="submit"
+                      disabled={!isValid || loading}
+                      className={`px-4 py-2 rounded font-semibold ${
+                        isValid
+                          ? 'bg-green-600 hover:bg-green-700 text-white'
+                          : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      }`}
+                    >
+                      {loading ? 'Salvataggio in corso...' : 'Salva modifiche'}
+                    </button>
+                  </div>
+                </form>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
+        </div>
+      </Dialog>
+    </Transition>
+  );
 };
 
 export default BreedingEditModal;
