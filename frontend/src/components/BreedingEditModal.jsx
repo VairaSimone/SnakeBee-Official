@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { useForm, useFieldArray } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -7,7 +7,6 @@ import { toast } from 'react-toastify';
 import { eventTypes, sexOptions } from '../utils/constantsBreeding';
 import { validateDatesSequence } from '../utils/validateDatesSequence';
 import { Dialog, Transition } from '@headlessui/react';
-import { Fragment, useEffect, useRef, useState } from 'react';
 const hatchlingSchema = yup.object({
   morph: yup.string().required('Morph è richiesto'),
   sex: yup.string().oneOf(['M', 'F', 'U']).required('Sesso è richiesto'),
