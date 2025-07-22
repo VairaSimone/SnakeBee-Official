@@ -75,8 +75,8 @@ const FeedingModal = ({ show, handleClose, reptileId, onFeedingAdded, onSuccess 
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6"
-      onClick={handleClose}
+  className="bg-white rounded-xl shadow-2xl w-full max-w-4xl overflow-y-auto p-4 sm:p-6 relative"
+  style={{ maxHeight: 'calc(100svh - 40px)' }}      onClick={handleClose}
     >
       <div
         className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto p-4 sm:p-6 relative"
