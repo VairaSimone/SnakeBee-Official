@@ -42,9 +42,23 @@ const ReptileCreateModal = ({ show, handleClose, setReptiles, onSuccess }) => {
 
   const validateForm = () => {
     const errors = {};
+      const today = new Date();
+  const minDate = new Date();
+  minDate.setFullYear(today.getFullYear() - 100); // massimo 100 anni fa
+
     if (!formData.species.trim()) errors.species = 'La specie è obbligatoria';
     if (!formData.sex) errors.sex = 'Il sesso è obbligatorio';
-    if (formData.birthDate && new Date(formData.birthDate) > new Date()) errors.birthDate = 'La data non può essere futura';
+if (formData.birthDate) {
+    const birth = new Date(formData.birthDate);
+
+    if (birth > today) {
+      errors.birthDate = 'La data non può essere nel futuro';
+    } else if (birth < minDate) {
+      errors.birthDate = 'La data è troppo lontana nel passato (max 100 anni)';
+    }
+  }
+   
+   
     return errors;
   };
   const resetForm = () => {
@@ -129,7 +143,8 @@ const ReptileCreateModal = ({ show, handleClose, setReptiles, onSuccess }) => {
                     </div>
                     <div>
                       <label className={labelClasses}>Data di nascita *</label>
-                      <input type="date" name="birthDate" value={formData.birthDate} onChange={handleChange} className={`${inputClasses} text-sm`} />
+                      <input type="date" name="birthDate" value={formData.birthDate} onChange={handleChange} className={`${inputClasses} text-sm`}  max={new Date().toISOString().split('T')[0]}
+  min={new Date(new Date().setFullYear(new Date().getFullYear() - 100)).toISOString().split('T')[0]}/>
                     </div>
                     <div>
                       <label className={labelClasses}>Sesso *</label>

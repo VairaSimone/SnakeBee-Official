@@ -32,10 +32,10 @@ const ConfirmModal = ({ show, title, message, onConfirm, onCancel }) => {
         <h3 className="text-lg font-semibold">{title}</h3>
         <p className="text-sm text-gray-700">{message}</p>
         <div className="flex justify-between">
-          <button onClick={onCancel} className="text-black px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">
+          <button onClick={onCancel} className="btn-animate text-black px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">
             Annulla
           </button>
-          <button onClick={onConfirm} className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+          <button onClick={onConfirm} className="btn-animate px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
             Conferma
           </button>
         </div>
@@ -254,7 +254,7 @@ const UserProfile = () => {
     <div className="relative">
       <Toast toasts={toasts} removeToast={removeToast} />
 
-      <div className="max-w-4xl mx-auto px-4 py-10 text-gray-800">
+<div className="max-w-4xl mx-auto px-4 py-10 text-gray-800 animate-fade-slide-up">
         <div className="bg-white rounded-lg shadow-md p-6 space-y-6">
           <div className="flex justify-between items-center">
             <h2 className="text-2xl font-semibold text-[#228B22]">Il tuo Profilo</h2>
@@ -262,7 +262,7 @@ const UserProfile = () => {
           </div>
 
           <div className="text-center">
-            <img src={avatarPreview || 'https://res.cloudinary.com/dg2wcqflh/image/upload/v1753088270/sq1upmjw7xgrvpkghotk.png'} alt="Avatar" className="w-24 h-24 rounded-full mx-auto border-4 border-[#FFD700]" />
+            <img src={avatarPreview || 'https://res.cloudinary.com/dg2wcqflh/image/upload/v1753088270/sq1upmjw7xgrvpkghotk.png'} alt="Avatar" className="w-24 h-24 rounded-full mx-auto border-4 border-[#FFD700] transition duration-300 hover:shadow-[0_0_20px_5px_rgba(255,215,0,0.6)]" onClick={() => addToast("👀 Bel tentativo, ma non si può cambiare così!", "success")}/>
             <h3 className="mt-2 text-lg font-medium">{name}</h3>
             <p className="text-sm text-gray-500">{email}</p>
           </div>
@@ -287,7 +287,7 @@ const UserProfile = () => {
                 onChange={(e) => setAvatar(e.target.files[0])}
                 className="w-full border rounded px-3 py-2 mt-1 bg-white text-black"
               />
-            </div>            <button type="submit" className="w-full bg-[#228B22] text-white py-2 rounded hover:bg-green-700">
+            </div>            <button type="submit" className="btn-animate  w-full bg-[#228B22] text-white py-2 rounded hover:bg-green-700">
               Aggiorna Profilo
             </button>
           </form>
@@ -295,7 +295,7 @@ const UserProfile = () => {
           <hr className="border-t" />
 
           {/* Cambio email */}
-          <div>
+          <div animate-section-fade>
             <h3 className="text-xl font-semibold text-[#2B2B2B]">Cambio Email</h3>
             <form onSubmit={handleChangeEmail} className="space-y-4 mt-2">
               <div>
@@ -326,7 +326,7 @@ const UserProfile = () => {
                   className="w-full border rounded px-3 py-2 mt-1 bg-white text-black"
                 />
               </div>
-              <button type="submit" className="w-full bg-[#FFD700] text-black py-2 rounded hover:bg-yellow-500">
+              <button type="submit" className="btn-animate w-full bg-[#FFD700] text-black py-2 rounded hover:bg-yellow-500">
                 Invia Cambio Email
               </button>
             </form>
@@ -335,7 +335,7 @@ const UserProfile = () => {
           <hr className="border-t" />
 
           {/* Cambio password */}
-          <div>
+          <div animate-section-fade>
             <h3 className="text-xl font-semibold text-[#2B2B2B]">Cambio Password</h3>
             <form onSubmit={handleChangePassword} className="space-y-4 mt-2">
               <input
@@ -360,7 +360,7 @@ const UserProfile = () => {
                 className="w-full border rounded px-3 py-2 bg-white text-black"
               />
               {passwordError && <p className="text-sm text-red-600">{passwordError}</p>}
-              <button type="submit" className="w-full bg-[#CC3300] text-white py-2 rounded hover:bg-red-700">
+              <button type="submit" className="btn-animate w-full bg-[#CC3300] text-white py-2 rounded hover:bg-red-700">
                 Cambia Password
               </button>
             </form>
@@ -369,7 +369,7 @@ const UserProfile = () => {
           <hr className="border-t" />
 
           {/* Notifiche email */}
-          <div>
+          <div animate-section-fade>
             <h3 className="text-xl font-semibold text-[#2B2B2B]">Notifiche Email</h3>
             {notificationMsg && <p className="text-sm text-gray-700 mb-2">{notificationMsg}</p>}
             <div className="mt-4 flex items-center justify-between">
@@ -386,7 +386,7 @@ const UserProfile = () => {
             </div>
             <button
               onClick={handleNotificationSave}
-              className="mt-4 bg-[#228B22] text-white px-4 py-2 rounded hover:bg-green-700"
+              className="btn-animate mt-4 bg-[#228B22] text-white px-4 py-2 rounded hover:bg-green-700"
             >
               Salva Preferenze
             </button>
@@ -394,14 +394,14 @@ const UserProfile = () => {
 
           <hr className="border-t" />
           {/* Esporta dati in Excel */}
-          <div>
+          <div animate-section-fade>
             <h3 className="text-xl font-semibold text-[#2B2B2B]">Esporta i tuoi dati</h3>
             <p className="text-sm text-gray-500 mb-2">
               Scarica un file Excel con tutti i dati dei tuoi rettili, alimentazioni, eventi e riproduzioni.
             </p>
             <button
               onClick={handleExportExcel}
-              className="bg-[#1E90FF] text-white px-4 py-2 rounded hover:bg-blue-700"
+              className="btn-animate bg-[#1E90FF] text-white px-4 py-2 rounded hover:bg-blue-700"
             >
               Scarica Excel
             </button>
@@ -409,12 +409,12 @@ const UserProfile = () => {
           <hr className="border-t" />
 
           {/* Elimina account */}
-          <div>
+          <div animate-section-fade>
             <h3 className="text-xl font-semibold text-red-600">Elimina Account</h3>
             <p className="text-sm text-gray-500 mb-3">Attenzione! Questa azione è irreversibile.</p>
             <button
               onClick={() => setShowDeleteModal(true)}
-              className="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded transition-colors duration-200"
+              className="btn-animate w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded transition-colors duration-200"
             >
               Elimina Account
             </button>

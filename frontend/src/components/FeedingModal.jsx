@@ -74,9 +74,11 @@ const FeedingModal = ({ show, handleClose, reptileId, onFeedingAdded, onSuccess 
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-transparent flex items-center justify-center px-4"
+      className="modal-bg fixed inset-0 z-50 bg-opacity-100 flex items-center justify-center backdrop-blur-sm"
       onClick={handleClose} // chiude il modale cliccando sullo sfondo
     >
+
+
       <div
         className="bg-white rounded-lg shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto p-6 relative"
         onClick={(e) => e.stopPropagation()} // impedisce la chiusura se clicchi dentro il modale

@@ -21,73 +21,75 @@ const sendVerificationEmail = async (to, code) => {
     subject: 'Conferma il tuo indirizzo email per SnakeBee',
     text: `Benvenuto in SnakeBee!\n\nUtilizza questo codice per verificare la tua email: ${code}\nOppure clicca qui: ${verificationLink}`,
     html: `
-      <div style="
+<div style="
         max-width: 600px;
         margin: 20px auto;
         padding: 30px;
-        background-color: #f7f7f7;
-        border-radius: 10px;
-        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        background-color: #FAF3E0; /* clay */
+        border-radius: 12px;
+        font-family: 'Poppins', sans-serif;
+        color: #2B2B2B; /* charcoal */
       ">
         <div style="text-align: center; margin-bottom: 30px;">
-          <img src="${process.env.LOGO_URL}" alt="SnakeBee Logo" style="max-width: 200px; height: auto;">
+          <img src="${process.env.LOGO_URL}" alt="SnakeBee Logo" style="max-width: 180px; height: auto;">
         </div>
 
-        <h1 style="color: #2c3e50; text-align: center; margin-bottom: 30px;">
-          Conferma il tuo indirizzo email
+        <h1 style="color: #228B22; text-align: center; margin-bottom: 25px; font-weight: 700;">
+          Benvenuto in SnakeBee! 🎉
         </h1>
 
+        <p style="font-size: 16px; line-height: 1.5; margin-bottom: 20px;">
+          Ciao! Per completare la tua registrazione, conferma il tuo indirizzo email utilizzando il codice qui sotto:
+        </p>
+
         <div style="
-          background-color: #ffffff;
-          padding: 25px;
+          background-color: #EDE7D6; /* sand */
+          padding: 20px;
           border-radius: 8px;
-          margin-bottom: 25px;
+          text-align: center;
+          font-size: 28px;
+          letter-spacing: 3px;
+          font-weight: 600;
+          color: #556B2F; /* olive */
+          margin-bottom: 30px;
+          user-select: all;
         ">
-          <p style="font-size: 16px; color: #555; line-height: 1.6;">
-            Ciao,<br>
-            Grazie per esserti registrato a SnakeBee! Per completare la registrazione,
-            conferma il tuo indirizzo email utilizzando il codice qui sotto:
-          </p>
-
-          <div style="
-            background-color: #f0f0f0;
-            padding: 15px;
-            border-radius: 5px;
-            text-align: center;
-            font-size: 24px;
-            letter-spacing: 2px;
-            margin: 25px 0;
-            color: #2c3e50;
-          ">
-            ${code}
-          </div>
-
-          <p style="text-align: center; margin: 30px 0;">
-            <a href="${verificationLink}" 
-              style="
-                background-color: #3498db;
-                color: white;
-                padding: 12px 25px;
-                border-radius: 5px;
-                text-decoration: none;
-                font-weight: bold;
-                display: inline-block;
-              ">
-              Verifica Ora
-            </a>
-          </p>
-
-          <p style="font-size: 14px; color: #777; text-align: center;">
-            Oppure copia e incolla questo link nel tuo browser:<br>
-            <span style="word-break: break-all; color: #3498db;">${verificationLink}</span>
-          </p>
+          ${code}
         </div>
 
-        <p style="font-size: 12px; color: #777; text-align: center;">
-          Se non hai richiesto questa registrazione, puoi ignorare questa email.
+        <div style="text-align: center; margin-bottom: 25px;">
+          <a href="${verificationLink}"
+            style="
+              background-color: #228B22; /* forest */
+              color: #FFD700; /* honey */
+              padding: 14px 35px;
+              border-radius: 25px;
+              text-decoration: none;
+              font-weight: 700;
+              font-size: 18px;
+              display: inline-block;
+              box-shadow: 0 4px 8px rgba(34, 139, 34, 0.3);
+              transition: background-color 0.3s ease;
+            "
+            onmouseover="this.style.backgroundColor='#556B2F'"
+            onmouseout="this.style.backgroundColor='#228B22'"
+          >
+            Verifica Ora
+          </a>
+        </div>
+
+        <p style="font-size: 14px; color: #555; text-align: center; word-break: break-word;">
+          Oppure copia e incolla questo link nel tuo browser:<br>
+          <a href="${verificationLink}" style="color: #228B22; text-decoration: underline;">
+            ${verificationLink}
+          </a>
+        </p>
+
+        <p style="font-size: 12px; color: #777; text-align: center; margin-top: 40px;">
+          Se non hai richiesto questa registrazione, ignora pure questa email.
         </p>
       </div>
-    `  };
+    ` };
 
   try {
     await transporter.sendMail(mailOptions);
@@ -106,73 +108,75 @@ const sendPasswordResetEmail = async (to, code) => {
     subject: 'Reset della Password - SnakeBee',
     text: `Hai richiesto il reset della password. Codice: ${code}\nLink diretto: ${resetLink}`,
     html: `
-      <div style="
+<div style="
         max-width: 600px;
         margin: 20px auto;
         padding: 30px;
-        background-color: #f7f7f7;
-        border-radius: 10px;
-        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        background-color: #FAF3E0; /* clay */
+        border-radius: 12px;
+        font-family: 'Poppins', sans-serif;
+        color: #2B2B2B; /* charcoal */
       ">
         <div style="text-align: center; margin-bottom: 30px;">
-          <img src="${process.env.LOGO_URL}" alt="SnakeBee Logo" style="max-width: 200px; height: auto;">
+          <img src="${process.env.LOGO_URL}" alt="SnakeBee Logo" style="max-width: 180px; height: auto;">
         </div>
 
-        <h1 style="color: #2c3e50; text-align: center; margin-bottom: 30px;">
-          Reset della Password
+        <h1 style="color: #CC3300; text-align: center; margin-bottom: 25px; font-weight: 700;">
+          Reset della Password 🔐
         </h1>
 
+        <p style="font-size: 16px; line-height: 1.5; margin-bottom: 20px;">
+          Ciao! Hai richiesto di resettare la tua password. Usa il codice qui sotto o clicca il pulsante per procedere:
+        </p>
+
         <div style="
-          background-color: #ffffff;
-          padding: 25px;
+          background-color: #EDE7D6; /* sand */
+          padding: 20px;
           border-radius: 8px;
-          margin-bottom: 25px;
+          text-align: center;
+          font-size: 28px;
+          letter-spacing: 3px;
+          font-weight: 600;
+          color: #CC3300; /* brick */
+          margin-bottom: 30px;
+          user-select: all;
         ">
-          <p style="font-size: 16px; color: #555; line-height: 1.6;">
-            Ciao,<br>
-            Hai richiesto di resettare la tua password. Utilizza il codice qui sotto 
-            o clicca il pulsante per completare l'operazione:
-          </p>
-
-          <div style="
-            background-color: #f0f0f0;
-            padding: 15px;
-            border-radius: 5px;
-            text-align: center;
-            font-size: 24px;
-            letter-spacing: 2px;
-            margin: 25px 0;
-            color: #2c3e50;
-          ">
-            ${code}
-          </div>
-
-          <p style="text-align: center; margin: 30px 0;">
-            <a href="${resetLink}" 
-              style="
-                background-color: #e74c3c;
-                color: white;
-                padding: 12px 25px;
-                border-radius: 5px;
-                text-decoration: none;
-                font-weight: bold;
-                display: inline-block;
-              ">
-              Resetta Password Ora
-            </a>
-          </p>
-
-          <p style="font-size: 14px; color: #777; text-align: center;">
-            Questo link è valido per 1 ora.<br>
-            <span style="word-break: break-all; color: #3498db;">${resetLink}</span>
-          </p>
+          ${code}
         </div>
 
-        <p style="font-size: 12px; color: #777; text-align: center;">
-          Se non hai richiesto questa operazione, ti preghiamo di ignorare questa email.
+        <div style="text-align: center; margin-bottom: 25px;">
+          <a href="${resetLink}"
+            style="
+              background-color: #CC3300; /* brick */
+              color: #FFD700; /* honey */
+              padding: 14px 35px;
+              border-radius: 25px;
+              text-decoration: none;
+              font-weight: 700;
+              font-size: 18px;
+              display: inline-block;
+              box-shadow: 0 4px 8px rgba(204, 51, 0, 0.3);
+              transition: background-color 0.3s ease;
+            "
+            onmouseover="this.style.backgroundColor='#992200'"
+            onmouseout="this.style.backgroundColor='#CC3300'"
+          >
+            Resetta Password Ora
+          </a>
+        </div>
+
+        <p style="font-size: 14px; color: #555; text-align: center; word-break: break-word;">
+          Questo link è valido per 1 ora.<br>
+          <a href="${resetLink}" style="color: #CC3300; text-decoration: underline;">
+            ${resetLink}
+          </a>
+        </p>
+
+        <p style="font-size: 12px; color: #777; text-align: center; margin-top: 40px;">
+          Se non hai richiesto questa operazione, ignora pure questa email.
         </p>
       </div>
-    `  };
+      `  };
 
   try {
     await transporter.sendMail(mailOptions);

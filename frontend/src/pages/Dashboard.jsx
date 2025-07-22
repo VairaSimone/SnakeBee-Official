@@ -121,14 +121,14 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="p-4 bg-[#FAF3E0] min-h-screen">
+<div className="p-4 bg-[#FAF3E0] min-h-screen animate-dashboard-fade-in">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
         <div>
           <h2 className="text-2xl font-bold text-[#2B2B2B]">La tua Dashboard</h2>
           <p className="text-sm text-gray-700">Hai {allReptiles.length} rettil{allReptiles.length !== 1 ? 'i' : 'e'} registrat{allReptiles.length !== 1 ? 'i' : 'o'}</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-          <button onClick={() => setShowCreateModal(true)} className="bg-[#228B22] text-white px-4 py-2 rounded hover:bg-green-700">+ Aggiungi rettile</button>
+          <button onClick={() => setShowCreateModal(true)} className="btn-animate bg-[#228B22] text-white px-4 py-2 rounded hover:bg-green-700">+ Aggiungi rettile</button>
         </div>
       </div>
 
@@ -205,18 +205,18 @@ const Dashboard = () => {
             <Link
               to={`/reptiles/${reptile._id}`}
               key={reptile._id}
-              className="bg-white rounded-xl shadow p-4 hover:shadow-lg transition cursor-pointer relative block"
+  className="bg-white rounded-xl shadow p-4 transition cursor-pointer relative block animate-card-appear group hover:scale-[1.02] hover:shadow-xl hover:ring-2 hover:ring-[#228B22] duration-300 ease-out card-glow"
             >
               <div className="aspect-w-16 aspect-h-10 mb-2">
                 <img
                   src={reptile.image || 'https://res.cloudinary.com/dg2wcqflh/image/upload/v1753088270/sq1upmjw7xgrvpkghotk.png'}
                   alt={reptile.name}
-                  className="object-cover w-full h-full rounded"
+  className="object-cover w-full h-full rounded transform transition duration-300 ease-out group-hover:scale-105 group-hover:rotate-[0.5deg]"
                 />
               </div>
               <div className="flex items-center justify-between">
-                <h3 className="text-xl font-semibold">{reptile.name}</h3>
-                <span title={reptile.gender}>
+                <h3 className="text-xl font-semibold group-hover:text-[#228B22] transition duration-300">{reptile.name}</h3>
+                <span title={reptile.gender} className="transition-transform duration-300 group-hover:scale-125">
                   {reptile.sex === 'M' && <FaMars className="text-blue-600" />}
                   {reptile.sex === 'F' && <FaVenus className="text-pink-500" />}
                 </span>
@@ -227,13 +227,13 @@ const Dashboard = () => {
                 Prossimo pasto: {reptile.nextFeedingDate ? new Date(reptile.nextFeedingDate).toLocaleDateString() : 'Nessuno'}
               </p>
 
-              <div className="flex gap-2 mt-3">
+              <div className="flex flex-wrap gap-2 mt-3">
                 <button
                   onClick={(e) => {
                     e.preventDefault(); e.stopPropagation();
                     setSelectedReptile(reptile); setShowEditModal(true);
                   }}
-                  className="flex-1 bg-blue-600 text-white py-1 rounded"
+                  className="flex-1 min-w-[90px] text-sm bg-blue-600 text-white py-1 rounded hover:bg-blue-700 hover:scale-105 transition-transform duration-200"
                 >
                   Modifica
                 </button>
@@ -242,27 +242,27 @@ const Dashboard = () => {
                     e.preventDefault(); e.stopPropagation();
                     setSelectedReptile(reptile); setShowFeedingModal(true);
                   }}
-                  className="flex-1 bg-orange-400 text-white py-1 rounded"
+                  className="flex-1 min-w-[90px] text-sm bg-orange-400 text-white py-1 rounded hover:bg-orange-700 hover:scale-105 transition-transform duration-200"
                 >
-                  Pasti
+                  Alimentazione
                 </button>
                 <button
-  onClick={(e) => {
-    e.preventDefault(); e.stopPropagation();
-    setSelectedReptile(reptile);
-    setShowEventModal(true);
-  }}
-  className="flex-1 bg-purple-600 text-white py-1 rounded"
->
-  Eventi
-</button>
+                  onClick={(e) => {
+                    e.preventDefault(); e.stopPropagation();
+                    setSelectedReptile(reptile);
+                    setShowEventModal(true);
+                  }}
+                  className="flex-1 min-w-[90px] text-sm bg-purple-600 text-white py-1 rounded hover:bg-purple-700 hover:scale-105 transition-transform duration-200"
+                >
+                  Eventi
+                </button>
 
                 <button
                   onClick={(e) => {
                     e.preventDefault(); e.stopPropagation();
                     setPendingDelete(reptile); setShowDeleteModal(true);
                   }}
-                  className="flex-1 bg-red-500 text-white py-1 rounded"
+                  className="flex-1 min-w-[90px] text-sm bg-red-500 text-white py-1 rounded hover:bg-red-700 hover:scale-105 transition-transform duration-200"
                 >
                   Elimina
                 </button>
@@ -278,7 +278,7 @@ const Dashboard = () => {
           <button
             key={i + 1}
             onClick={() => setPage(i + 1)}
-            className={`px-3 py-1 rounded ${i + 1 === page ? 'bg-[#228B22] text-white' : 'bg-gray-200'}`}
+            className={`px-3 py-1 rounded ${i + 1 === page ? 'bg-[#228B22] text-white' : 'bg-gray-200 hover:bg-gray-300'}`}
           >
             {i + 1}
           </button>
@@ -310,11 +310,25 @@ const Dashboard = () => {
         handleClose={() => setShowBreedingModal(false)}
       />
       <EventModal
-  show={showEventModal}
-  handleClose={() => setShowEventModal(false)}
-  reptileId={selectedReptile?._id}
+        show={showEventModal}
+        handleClose={() => setShowEventModal(false)}
+        reptileId={selectedReptile?._id}
+      />
+<ConfirmDeleteModal
+  show={showDeleteModal}
+  handleClose={() => {
+    setShowDeleteModal(false);
+    setPendingDelete(null);
+  }}
+  onConfirm={() => {
+    if (pendingDelete?._id) {
+      handleDelete(pendingDelete._id);
+      setShowDeleteModal(false);
+      setPendingDelete(null);
+    }
+  }}
+  reptile={pendingDelete}
 />
-
     </div>
   );
 };

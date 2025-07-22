@@ -60,11 +60,11 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#FAF3E0] px-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 animate-fade-in-up">
         <h2 className="text-2xl font-bold text-[#2B2B2B] mb-6 text-center">Accedi a SnakeBee</h2>
 
         {errorMessage && (
-          <div className="mb-4 text-sm text-red-700 bg-red-100 p-3 rounded-md">
+          <div className="mb-4 text-sm text-red-700 bg-red-100 p-3 rounded-md transition-all duration-300 animate-shake">
             {errorMessage}
           </div>
         )}
@@ -106,7 +106,7 @@ const Login = () => {
             type="submit"
             disabled={isLoading}
             className={`w-full py-2 rounded-md text-white transition ${
-              isLoading ? 'bg-gray-400 cursor-not-allowed' : 'bg-[#228B22] hover:bg-green-700'
+              isLoading ? 'bg-gray-400 cursor-not-allowed animate-pulse' : 'bg-[#228B22] hover:bg-green-700'
             }`}
           >
             {isLoading ? (
@@ -143,22 +143,9 @@ const Login = () => {
       </div>
 
       {/* Spinner CSS */}
-      <style>{`
-        .loader {
-          border: 2px solid #f3f3f3;
-          border-top: 2px solid #fff;
-          border-radius: 50%;
-          width: 16px;
-          height: 16px;
-          animation: spin 0.6s linear infinite;
-        }
 
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-      `}</style>
     </div>
+
   );
 };
 

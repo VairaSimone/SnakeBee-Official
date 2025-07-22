@@ -77,11 +77,11 @@ const Register = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#FAF3E0] px-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 animate-fade-in-up">
         <h2 className="text-2xl font-bold text-[#2B2B2B] mb-6 text-center">Crea un nuovo account</h2>
 
         {errorMessage && (
-          <div className="bg-red-100 text-red-700 px-4 py-2 rounded-md mb-4 text-sm text-center">
+          <div className="bg-red-100 text-red-700 px-4 py-2 rounded-md mb-4 text-sm text-center animate-shake transition-all duration-300">
             {errorMessage}
           </div>
         )}
@@ -149,7 +149,7 @@ const Register = () => {
 
           <button
             type="submit"
-            className="w-full bg-[#228B22] text-white py-2 rounded-md hover:bg-green-700 transition"
+            className="w-full bg-[#228B22] text-white py-2 rounded-md hover:bg-green-700 transition  transform duration-150"
           >
             Registrati
           </button>
@@ -183,7 +183,7 @@ const Register = () => {
             Accetto il trattamento dei dati personali secondo la <Link to="/privacy-policy" className="text-blue-600 underline">Privacy Policy</Link>.
           </label>
         </div>
-        {googleError && <p className="text-red-600 text-sm">{googleError}</p>}
+        {googleError && <p className="text-red-600 text-sm animate-shake transition-all duration-300">{googleError}</p>}
 
         <p className="mt-6 text-sm text-center text-gray-700">
           Hai già un account?{' '}
@@ -195,4 +195,6 @@ const Register = () => {
     </div>
   );
 };
+<style>{`
+`}</style>
 export default Register;

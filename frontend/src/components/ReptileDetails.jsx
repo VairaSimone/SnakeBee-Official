@@ -61,7 +61,7 @@ const ReptileDetails = () => {
   if (!reptile) return <div className="text-red-600 text-center mt-10">❌ Rettile non trovato</div>;
 
   return (
-    <div className="max-w-6xl mx-auto p-4 bg-[#FAF3E0] min-h-screen text-[#2B2B2B] font-sans">
+    <div className="max-w-6xl mx-auto p-4 bg-[#FAF3E0] min-h-screen text-[#2B2B2B] font-sans fade-in-up">
       <Link to="/dashboard" className="text-green-700 hover:underline mb-4 inline-block">← Torna indietro</Link>
 
       <div className="grid md:grid-cols-2 gap-6 bg-white p-6 rounded-lg shadow-lg">
@@ -69,7 +69,7 @@ const ReptileDetails = () => {
         <div>
           <img src={reptile.image || 'https://res.cloudinary.com/dg2wcqflh/image/upload/v1753088270/sq1upmjw7xgrvpkghotk.png'}
 
-            className="w-full h-auto object-cover rounded-md border border-[#EDE7D6]" />
+            className="w-full h-auto object-cover rounded-md border border-[#EDE7D6] avatar-animated" />
 
           <h2 className="text-3xl font-bold mt-4 text-[#228B22]">{reptile.name}</h2>
 
@@ -87,8 +87,14 @@ const ReptileDetails = () => {
                 {reptile.isBreeder ? 'Sì' : 'No'}
               </span>
             </p>
-            {reptile.notes && <p><strong>Note:</strong> {reptile.notes}</p>}
-          </div>
+            {reptile.notes && (
+              <div className="mt-4">
+                <h4 className="text-md font-semibold text-[#228B22] mb-1">📝 Note</h4>
+                <div className="bg-[#FFF8DC] border border-yellow-300 text-sm text-gray-800 p-3 rounded shadow-inner whitespace-pre-wrap">
+                  {reptile.notes}
+                </div>
+              </div>
+            )}          </div>
         </div>
 
         {/* RIGHT COLUMN */}
@@ -98,11 +104,12 @@ const ReptileDetails = () => {
 
           <div>
             <h3 className="text-xl font-semibold mb-2 border-b border-gray-300 pb-1">🍖 Alimentazione</h3>
+
             {feedings.length > 0 ? (
               <>
                 <ul className="space-y-2">
                   {feedings.slice(0, visibleFeedings).map((feed, i) => (
-                    <li key={i} className="bg-[#EDE7D6] p-2 rounded">
+                    <li key={i} className="bg-[#EDE7D6] p-2 rounded glow-hover fade-in-up">
                       <p><strong>Data:</strong> {new Date(feed.date).toLocaleDateString()}</p>
                       <p><strong>Tipo cibo:</strong> {feed.foodType}</p>
                       <p><strong>Quantità:</strong> {feed.quantity || 'N/A'}</p>
@@ -116,7 +123,7 @@ const ReptileDetails = () => {
                   {visibleFeedings < feedings.length && (
                     <button
                       onClick={handleShowMore}
-                      className="px-4 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700"
+                      className="btn-animated px-4 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700"
                     >
                       Carica altri
                     </button>
@@ -124,7 +131,7 @@ const ReptileDetails = () => {
                   {visibleFeedings > 5 && (
                     <button
                       onClick={handleShowLess}
-                      className="px-4 py-1 text-sm bg-gray-600 text-white rounded hover:bg-gray-700"
+                      className="btn-animated px-4 py-1 text-sm bg-gray-600 text-white rounded hover:bg-gray-700"
                     >
                       Mostra meno
                     </button>
@@ -132,9 +139,10 @@ const ReptileDetails = () => {
                 </div>
               </>
             ) : (
-              <p className="text-sm text-gray-600">Nessun pasto registrato.</p>
+              <div className="bg-[#FDF6E3] p-3 rounded shadow-inner text-sm text-gray-600 border border-dashed border-yellow-300">
+                Nessun pasto registrato per ora. Puoi aggiungerne uno dalla sezione <strong>Alimentazione</strong>.
+              </div>
             )}
-
 
             <div>
               <h3 className="text-xl font-semibold mb-2 border-b border-gray-300 pb-1">📅 Eventi</h3>
@@ -142,19 +150,28 @@ const ReptileDetails = () => {
               {/* Muta */}
               <div className="mb-6">
                 <h4 className="text-lg font-bold text-[#228B22] mb-2">Muta</h4>
-                {events.filter(e => e.type === 'shed').slice(0, visibleShed).map(ev => (
-                  <div key={ev._id} className="bg-[#EDE7D6] p-3 rounded shadow-sm mb-2">
-                    <p><strong>Data:</strong> {new Date(ev.date).toLocaleDateString()}</p>
-                    {ev.notes && <p><strong>Note:</strong> {ev.notes}</p>}
+
+                {events.filter(e => e.type === 'shed').length > 0 ? (
+                  events.filter(e => e.type === 'shed').slice(0, visibleShed).map(ev => (
+                    <div key={ev._id} className="bg-[#EDE7D6] p-3 rounded shadow-sm mb-2 glow-hover fade-in-up">
+                      <p><strong>Data:</strong> {new Date(ev.date).toLocaleDateString()}</p>
+                      {ev.notes && <p><strong>Note:</strong> {ev.notes}</p>}
+                    </div>
+                  ))
+                ) : (
+                  <div className="bg-[#FDF6E3] p-3 rounded shadow-inner text-sm text-gray-600 border border-dashed border-yellow-300">
+                   📭 Nessuna muta registrata al momento.
                   </div>
-                ))}
+                )}
+
+
                 {events.filter(e => e.type === 'shed').length > 5 && (
                   <div className="space-x-2">
                     {visibleShed < events.filter(e => e.type === 'shed').length && (
-                      <button onClick={() => setVisibleShed(visibleShed + 5)} className="btn-sm bg-green-600 text-white px-3 py-1 rounded">Carica altri</button>
+                      <button onClick={() => setVisibleShed(visibleShed + 5)} className="btn-animated btn-sm bg-green-600 text-white px-3 py-1 rounded">Carica altri</button>
                     )}
                     {visibleShed > 5 && (
-                      <button onClick={() => setVisibleShed(5)} className="btn-sm bg-gray-600 text-white px-3 py-1 rounded">Mostra meno</button>
+                      <button onClick={() => setVisibleShed(5)} className="btn-animated btn-sm bg-gray-600 text-white px-3 py-1 rounded">Mostra meno</button>
                     )}
                   </div>
                 )}
@@ -163,19 +180,27 @@ const ReptileDetails = () => {
               {/* Feci */}
               <div className="mb-6">
                 <h4 className="text-lg font-bold text-[#228B22] mb-2">Feci</h4>
-                {events.filter(e => e.type === 'feces').slice(0, visibleFeces).map(ev => (
-                  <div key={ev._id} className="bg-[#EDE7D6] p-3 rounded shadow-sm mb-2">
-                    <p><strong>Data:</strong> {new Date(ev.date).toLocaleDateString()}</p>
-                    {ev.notes && <p><strong>Note:</strong> {ev.notes}</p>}
+                {events.filter(e => e.type === 'feces').length > 0 ? (
+                  events.filter(e => e.type === 'feces').slice(0, visibleFeces).map(ev => (
+                    <div key={ev._id} className="bg-[#EDE7D6] p-3 rounded shadow-sm mb-2">
+                      <p><strong>Data:</strong> {new Date(ev.date).toLocaleDateString()}</p>
+                      {ev.notes && <p><strong>Note:</strong> {ev.notes}</p>}
+                    </div>
+                  ))
+                ) : (
+                  <div className="bg-[#FDF6E3] p-3 rounded shadow-inner text-sm text-gray-600 border border-dashed border-yellow-300">
+                    💩 Nessuna registrazione di feci per ora.
                   </div>
-                ))}
+                )}
+
+
                 {events.filter(e => e.type === 'feces').length > 5 && (
                   <div className="space-x-2">
                     {visibleFeces < events.filter(e => e.type === 'feces').length && (
-                      <button onClick={() => setVisibleFeces(visibleFeces + 5)} className="btn-sm bg-green-600 text-white px-3 py-1 rounded">Carica altri</button>
+                      <button onClick={() => setVisibleFeces(visibleFeces + 5)} className="btn-animated btn-sm bg-green-600 text-white px-3 py-1 rounded">Carica altri</button>
                     )}
                     {visibleFeces > 5 && (
-                      <button onClick={() => setVisibleFeces(5)} className="btn-sm bg-gray-600 text-white px-3 py-1 rounded">Mostra meno</button>
+                      <button onClick={() => setVisibleFeces(5)} className="btn-animated btn-sm bg-gray-600 text-white px-3 py-1 rounded">Mostra meno</button>
                     )}
                   </div>
                 )}
@@ -184,19 +209,26 @@ const ReptileDetails = () => {
               {/* Visita veterinaria */}
               <div className="mb-6">
                 <h4 className="text-lg font-bold text-[#228B22] mb-2">Visita Veterinaria</h4>
-                {events.filter(e => e.type === 'vet').slice(0, visibleVet).map(ev => (
-                  <div key={ev._id} className="bg-[#EDE7D6] p-3 rounded shadow-sm mb-2">
-                    <p><strong>Data:</strong> {new Date(ev.date).toLocaleDateString()}</p>
-                    {ev.notes && <p><strong>Note:</strong> {ev.notes}</p>}
+                {events.filter(e => e.type === 'vet').length > 0 ? (
+                  events.filter(e => e.type === 'vet').slice(0, visibleVet).map(ev => (
+                    <div key={ev._id} className="bg-[#EDE7D6] p-3 rounded shadow-sm mb-2">
+                      <p><strong>Data:</strong> {new Date(ev.date).toLocaleDateString()}</p>
+                      {ev.notes && <p><strong>Note:</strong> {ev.notes}</p>}
+                    </div>
+                  ))
+                ) : (
+                  <div className="bg-[#FDF6E3] p-3 rounded shadow-inner text-sm text-gray-600 border border-dashed border-yellow-300">
+                    🩺 Nessuna visita veterinaria registrata.
                   </div>
-                ))}
+                )}
+
                 {events.filter(e => e.type === 'vet').length > 5 && (
                   <div className="space-x-2">
                     {visibleVet < events.filter(e => e.type === 'vet').length && (
-                      <button onClick={() => setVisibleVet(visibleVet + 5)} className="btn-sm bg-green-600 text-white px-3 py-1 rounded">Carica altri</button>
+                      <button onClick={() => setVisibleVet(visibleVet + 5)} className="btn-animated btn-sm bg-green-600 text-white px-3 py-1 rounded">Carica altri</button>
                     )}
                     {visibleVet > 5 && (
-                      <button onClick={() => setVisibleVet(5)} className="btn-sm bg-gray-600 text-white px-3 py-1 rounded">Mostra meno</button>
+                      <button onClick={() => setVisibleVet(5)} className="btn-animated btn-sm bg-gray-600 text-white px-3 py-1 rounded">Mostra meno</button>
                     )}
                   </div>
                 )}

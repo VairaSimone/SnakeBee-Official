@@ -54,12 +54,32 @@ const ReptileEditModal = ({ show, handleClose, reptile, setReptiles, onSuccess }
     setImage(file);
     setErrorMessage('');
   };
+const validateBirthDate = () => {
+  const today = new Date();
+  const minDate = new Date();
+  minDate.setFullYear(today.getFullYear() - 100);
 
+  const birth = new Date(formData.birthDate);
+
+  if (birth > today) {
+    setErrorMessage('La data di nascita non può essere nel futuro');
+    return false;
+  } else if (birth < minDate) {
+    setErrorMessage('La data di nascita è troppo antica (max 100 anni fa)');
+    return false;
+  }
+
+  return true;
+};
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setToastMsg(null);
-
+  setErrorMessage('');
+  if (!validateBirthDate()) {
+    setLoading(false);
+    return;
+  }
     try {
       const formDataToSubmit = new FormData();
       Object.entries(formData).forEach(([key, val]) => {
@@ -115,7 +135,8 @@ const ReptileEditModal = ({ show, handleClose, reptile, setReptiles, onSuccess }
             <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Nome" className="border p-2 rounded bg-white text-black w-full" />
             <input type="text" name="species" value={formData.species} onChange={handleChange} placeholder="Specie" required className="border p-2 rounded bg-white text-black w-full" />
             <input type="text" name="morph" value={formData.morph} onChange={handleChange} placeholder="Morph" required className="border p-2 rounded bg-white text-black w-full" />
-            <input type="date" name="birthDate" value={formData.birthDate} required onChange={handleChange} className="border p-2 rounded bg-white text-black w-full cursor-pointer" />
+            <input type="date" name="birthDate" value={formData.birthDate} required onChange={handleChange} className="border p-2 rounded bg-white text-black w-full cursor-pointer"  max={new Date().toISOString().split('T')[0]}
+  min={new Date(new Date().setFullYear(new Date().getFullYear() - 100)).toISOString().split('T')[0]}/>
             <select name="sex" value={formData.sex} onChange={handleChange} className="border p-2 rounded bg-white text-black w-full">
               <option value="">Seleziona sesso</option>
               <option value="M">Maschio</option>

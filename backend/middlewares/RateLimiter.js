@@ -8,7 +8,7 @@ export const refreshLimiter = rateLimit({
   legacyHeaders: false,
 });
 export const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minuti
+  windowMs: 5 * 60 * 1000, // 5 minuti
   max: 5, // max 5 tentativi per IP
   message: { message: "Troppi tentativi di login. Riprova più tardi." },
   standardHeaders: true,
@@ -16,7 +16,7 @@ export const loginLimiter = rateLimit({
 });
 
 export const registerLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 ora
+  windowMs: 5 * 60 * 1000, // 5 minuti
   max: 10,
   message: { message: "Troppi tentativi di registrazione. Riprova più tardi." },
   standardHeaders: true,

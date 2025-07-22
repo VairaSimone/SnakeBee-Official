@@ -181,14 +181,14 @@ export const PutReptile = async (req, res) => {
 
         const birthDateObject = birthDate ? new Date(birthDate) : reptile.birthDate;
 
-        reptile.name = name || reptile.name;
+        if ('name' in req.body) reptile.name = name;
         reptile.species = species || reptile.species;
         reptile.morph = morph || reptile.morph;
         reptile.birthDate = birthDateObject;
         reptile.image = imageUrl;
         reptile.sex = sex || reptile.sex;
         reptile.isBreeder = isBreeder === 'true' || isBreeder === true;
-        reptile.notes = notes || reptile.notes;
+        if ('notes' in req.body) reptile.notes = notes;
         const updatedReptile = await reptile.save();
 
         res.send(updatedReptile);

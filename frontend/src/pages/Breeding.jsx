@@ -44,9 +44,10 @@ const Breeding = () => {
   const fetchRecap = async (y) => {
     try {
       const res = await api.get(`/breeding/season/${y}`);
+          const sortedData = res.data.data.sort((a, b) => new Date(a.pairingDate) - new Date(b.pairingDate));
       setData({
-        original: res.data.data,
-        data: res.data.data,
+        original: sortedData,
+        data: sortedData,
         count: res.data.count,
       });
     } catch {
@@ -77,6 +78,8 @@ const Breeding = () => {
       filtered = filtered.filter(item => item.female?.name === female);
     }
 
+      filtered.sort((a, b) => new Date(a.pairingDate) - new Date(b.pairingDate));
+
     setData(prev => ({ ...prev, data: filtered }));
   };
 
@@ -101,7 +104,7 @@ const Breeding = () => {
   const femaleList = [...new Set(data?.original.map(i => i.female?.name).filter(Boolean))];
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
+    <div className="p-6 max-w-5xl mx-auto animate-breeding-fade-in">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
         <h2 className="text-2xl font-bold text-gray-900">Riepilogo Stagione {year}</h2>
         {seasonOpen && (
@@ -121,7 +124,7 @@ const Breeding = () => {
           <select
             value={year}
             onChange={(e) => setYear(Number(e.target.value))}
-            className="bg-white text-black border p-2 ml-2 rounded focus:outline-none focus:ring focus:border-blue-400"
+  className="bg-white text-black border p-2 ml-2 rounded focus:outline-none focus:ring focus:border-blue-400 transition duration-200 hover:ring-2 hover:ring-blue-300"
           >
             {Array.from({ length: 5 }).map((_, i) => {
               const y = currentYear - i;
@@ -185,7 +188,7 @@ const Breeding = () => {
               .filter(item => item.male?.name && item.male.name !== 'Animale eliminato' || item.female?.name && item.female.name !== 'Animale eliminato')
               .map((item) => (<div
                 key={item._id}
-                className="bg-white shadow rounded-lg p-4 border-l-4 border-blue-500 hover:shadow-lg transition"
+  className="bg-white shadow rounded-lg p-4 border-l-4 border-blue-500 hover:shadow-xl hover:bg-blue-50 transition duration-300 ease-out card-animated"
               >
                 <div className="flex justify-between items-center text-sm text-gray-600">
                   <span>
@@ -216,7 +219,7 @@ const Breeding = () => {
                       return (
                         <span
                           key={i}
-                          className={`inline-flex items-center gap-1 ${bg} ${text} px-3 py-1 rounded-full`}
+  className={`inline-flex items-center gap-1 ${bg} ${text} px-3 py-1 rounded-full badge-animated`}
                         >
 
                           <span>{icon}</span>
@@ -242,7 +245,7 @@ const Breeding = () => {
                   <div className="mt-4 flex gap-3">
                     <button
                       onClick={() => setEditData(item)}
-                      className="text-sm text-blue-700 underline"
+                      className="text-sm text-blue-700 underline btn-hover"
                     >
                       ✏️ Modifica
                     </button>
@@ -251,7 +254,7 @@ const Breeding = () => {
                         setDeleteTarget(item);
                         setShowDeleteModal(true);
                       }}
-                      className="text-sm text-red-700 underline"
+                      className="text-sm text-red-700 underline btn-hover"
                     >
                       🗑️ Elimina
                     </button>  </div>

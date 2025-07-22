@@ -70,18 +70,34 @@ const Navbar = () => {
         <ul className="hidden sm:flex gap-6 items-center font-medium">
           {!user ? (
             <>
-              <NavLink to="/login" className="hover:text-[#228B22]">Login</NavLink>
-              <NavLink to="/register" className="hover:text-[#228B22]">Registrati</NavLink>
+              <NavLink to="/login" className={({ isActive }) =>
+    `nav-link-hover ${
+      isActive ? 'text-[#228B22] font-semibold underline underline-offset-4' : 'hover:text-[#228B22]'
+    }`
+  }>Login</NavLink>
+              <NavLink to="/register" className={({ isActive }) =>
+    `nav-link-hover ${
+      isActive ? 'text-[#228B22] font-semibold underline underline-offset-4' : 'hover:text-[#228B22]'
+    }`
+  }>Registrati</NavLink>
             </>
           ) : (
             <>
-              <NavLink to="/dashboard" className="hover:text-[#228B22]">Dashboard</NavLink>
-              <NavLink to="/breeding" className="hover:text-[#228B22]">Riproduzione</NavLink>
+              <NavLink to="/dashboard" className={({ isActive }) =>
+    `nav-link-hover ${
+      isActive ? 'text-[#228B22] font-semibold underline underline-offset-4' : 'hover:text-[#228B22]'
+    }`
+  }>Dashboard</NavLink>
+              <NavLink to="/breeding" className={({ isActive }) =>
+    `nav-link-hover ${
+      isActive ? 'text-[#228B22] font-semibold underline underline-offset-4' : 'hover:text-[#228B22]'
+    }`
+  }>Riproduzione</NavLink>
 
               <button onClick={() => setShowNotifications(!showNotifications)} className="relative">
                 <FaBell className="text-xl" />
                 {notificationsCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-[#FFD700] text-xs font-bold text-black rounded-full px-1">
+<span className="absolute -top-1 -right-1 bg-[#FFD700] text-xs font-bold text-black rounded-full px-1 pulse-badge">
                     {notificationsCount}
                   </span>
                 )}
@@ -92,11 +108,11 @@ const Navbar = () => {
                   <img
                     src={user?.avatar?.trim() ? user.avatar : '/default-avatar.png'}
                     onError={(e) => { e.target.src = '/default-avatar.png'; }} alt="Avatar"
-                    className="w-9 h-9 rounded-full border-2 border-[#228B22]"
+                    className="w-9 h-9 rounded-full border-2 border-[#228B22] avatar-hover"
                   />
                 </button>
                 {avatarMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-40 bg-white border rounded-md shadow-lg z-50">
+<div className="absolute right-0 mt-2 w-40 bg-white border rounded-md shadow-lg z-50 pop-in">
                     <NavLink
                       to="/profile"
                       className="block px-4 py-2 hover:bg-[#F1F1F1]"
@@ -119,17 +135,17 @@ const Navbar = () => {
       </div>
 
       {mobileMenuOpen && (
-        <div className="sm:hidden px-4 py-3 space-y-3 bg-[#EDE7D6] flex flex-col text-base">
+<div className="sm:hidden px-4 py-3 space-y-3 bg-[#EDE7D6] flex flex-col text-base fade-slide">
           {!user ? (
             <>
-              <NavLink to="/login" onClick={() => setMobileMenuOpen(false)}>Login</NavLink>
-              <NavLink to="/register" onClick={() => setMobileMenuOpen(false)}>Registrati</NavLink>
+              <NavLink to="/login" className="nav-link-hover" onClick={() => setMobileMenuOpen(false)}>Login</NavLink>
+              <NavLink to="/register" className="nav-link-hover" onClick={() => setMobileMenuOpen(false)}>Registrati</NavLink>
             </>
           ) : (
             <>
-              <NavLink to="/dashboard" onClick={() => setMobileMenuOpen(false)}>Dashboard</NavLink>
-              <NavLink to="/breeding" onClick={() => setMobileMenuOpen(false)}>Riproduzione</NavLink>
-              <NavLink to="/profile" onClick={() => setMobileMenuOpen(false)}>Profilo</NavLink>
+              <NavLink to="/dashboard" className="nav-link-hover" onClick={() => setMobileMenuOpen(false)}>Dashboard</NavLink>
+              <NavLink to="/breeding" className="nav-link-hover" onClick={() => setMobileMenuOpen(false)}>Riproduzione</NavLink>
+              <NavLink to="/profile" className="nav-link-hover" onClick={() => setMobileMenuOpen(false)}>Profilo</NavLink>
               <button
                 onClick={handleLogout}
                 className="text-left text-red-600"
@@ -144,7 +160,7 @@ const Navbar = () => {
       {showNotifications && user && (
         <div className="fixed inset-0 z-40" onClick={() => setShowNotifications(false)}>
           <div
-            className="absolute top-20 right-4 bg-white border shadow-md rounded-md z-50 w-80 p-4"
+            className="absolute top-20 right-4 bg-white border shadow-md rounded-md z-50 w-80 p-4 pop-in"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex justify-between items-center mb-2">
