@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect, useRef, useState } from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm, useFieldArray, useWatch } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import api from '../services/api';
@@ -7,7 +7,6 @@ import { toast } from 'react-toastify';
 import { eventTypes, sexOptions } from '../utils/constantsBreeding';
 import { validateDatesSequence } from '../utils/validateDatesSequence';
 import { Dialog, Transition } from '@headlessui/react';
-import { useForm, useFieldArray, useWatch } from 'react-hook-form';
 
 const hatchlingSchema = yup.object({
   morph: yup.string().required('Morph è richiesto'),
