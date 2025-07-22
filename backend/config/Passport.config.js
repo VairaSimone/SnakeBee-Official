@@ -42,7 +42,7 @@ const googleStrategy = new GoogleStrategy({
     const appAccessToken = jwt.sign(
       { userid: user._id, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: "15m", algorithm: "HS256" }
+      { expiresIn: "2h", algorithm: "HS256" }
     );
     const appRefreshToken = jwt.sign(
       { userid: user._id },

@@ -10,14 +10,20 @@ const GoogleCallback = () => {
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get('token');
+    const accessToken = urlParams.get('accessToken');
+    const refreshToken = urlParams.get('refreshToken');
 
-    if (token) {
-      localStorage.setItem('token', token);
+    if (accessToken) {
+      localStorage.setItem('token', accessToken);
+    }
+    if (refreshToken) {
+      localStorage.setItem('refreshToken', refreshToken);
+    }
 
+    if (accessToken) {
       axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/v1/me`, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${accessToken}`,
         },
         withCredentials: true,
       })
@@ -27,10 +33,11 @@ const GoogleCallback = () => {
         })
         .catch((err) => {
           console.error('Error fetching user data:', err);
-          alert('Error retrieving user data.');
+          alert('Errore durante il recupero dei dati utente.');
         });
     } else {
-      console.error('Token not found');
+      console.error('Access token mancante');
+      alert('Access token mancante. Riprova ad accedere.');
     }
   }, [navigate, dispatch]);
 

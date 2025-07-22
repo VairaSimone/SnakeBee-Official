@@ -26,6 +26,7 @@ const Login = () => {
 
       const { accessToken } = res.data;
       localStorage.setItem('token', accessToken);
+if (refreshToken) localStorage.setItem('refreshToken', refreshToken);
 
       const userRes = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/v1/me`, {
         headers: { Authorization: `Bearer ${accessToken}` },

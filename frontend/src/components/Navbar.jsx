@@ -20,6 +20,8 @@ const Navbar = () => {
     try {
       await api.post('/api/v1/logout', null, { withCredentials: true });
       dispatch(logoutUser());
+localStorage.removeItem('refreshToken');
+
       localStorage.removeItem('token');
       navigate('/login');
     } catch (err) {

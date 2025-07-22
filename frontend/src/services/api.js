@@ -32,10 +32,22 @@ api.interceptors.response.use(
             originalRequest._retry = true;
 
             try {
-                const { data } = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/v1/refresh-token`, null, {
-                    withCredentials: true,
-                });
+const refreshToken = localStorage.getItem('refreshToken');
 
+let data;
+if (refreshToken) {
+  // fallback per Safari
+  const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/v1/refresh-token`, null, {
+    headers: { Authorization: `Bearer ${refreshToken}` },
+  });
+  data = response.data;
+} else {
+  // normale cookie-based
+  const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/v1/refresh-token`, null, {
+    withCredentials: true,
+  });
+  data = response.data;
+}
                 if (data.accessToken) {
                     store.dispatch(loginUser(data.accessToken));
                     localStorage.setItem('token', data.accessToken);

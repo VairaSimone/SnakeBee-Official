@@ -104,7 +104,7 @@ export const login = async (req, res, next) => {
       user.loginHistory = user.loginHistory.slice(-20);
     }
     await user.save();
-    return res.json({ accessToken });
+    return res.json({ accessToken, refreshToken  });
   } catch (error) {
     console.log(error)
     return res.status(500).json({ message: "Server Error" });
@@ -261,7 +261,7 @@ export const callBackGoogle = async (req, res, next) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    res.redirect(`${process.env.FRONTEND_URL}/login-google-callback?token=${accessToken}`);
+res.redirect(`${process.env.FRONTEND_URL}/login-google-callback?accessToken=${accessToken}&refreshToken=${refreshToken}`);
   } catch (err) {
     console.error("Errore nell'autenticazione con Google:", err);
     res.status(500).send("Errore del server");
