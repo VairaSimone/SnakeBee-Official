@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 
-const ConfirmDeleteModal = ({ show, onClose, onConfirm, reptileName }) => {
+const ConfirmDeleteModal = ({ show, onClose, onConfirm, reptile }) => {
   return (
     <Transition show={show} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={onClose}>
@@ -36,11 +36,10 @@ const ConfirmDeleteModal = ({ show, onClose, onConfirm, reptileName }) => {
                 
                 {/* Messaggio */}
                 <div className="mt-2 text-sm text-gray-700">
-                  <p>
-                    Sei sicuro di voler eliminare <strong>{reptileName}</strong>?<br />
-                    Questa azione è <span className="text-red-600 font-semibold">irreversibile</span>.
-                  </p>
-                </div>
+<p>
+  Sei sicuro di voler eliminare <strong>{reptile?.name}</strong>?<br />
+  Questa azione è <span className="text-red-600 font-semibold">irreversibile</span>.
+</p>                </div>
 
                 {/* Pulsanti */}
                 <div className="mt-6 flex justify-end gap-3">

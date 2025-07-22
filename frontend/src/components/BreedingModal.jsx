@@ -223,8 +223,160 @@ useEffect(() => {
                   </div>
                 )}
 
-                {/* Tutta la tua logica interna del form resta UGUALE */}
-                {/* Puoi lasciare tutto il contenuto del form intatto */}
+      {/* Selezione maschio/femmina */}
+          <div className="bg-white text-black grid grid-cols-2 gap-4">
+
+            {['male', 'female'].map(role => (
+              <div key={role}>
+                <label className="capitalize">{role}</label>
+                <select
+                  {...register(role)}
+                  disabled={!seasonOpen}
+                  className="bg-white text-black border p-2 rounded w-full"
+                >
+                  <option value="">{`Seleziona ${role}`}</option>
+                  {reptiles
+                    .filter(r => r.isBreeder === true)
+                    .filter(r => (role === 'male' ? r.sex === 'M' : r.sex === 'F'))
+                    .map(r => (
+                      <option key={r._id} value={r._id}>
+                        {r.morph} ({r.sex})
+                      </option>
+                    ))}
+                </select>
+                {errors[role] && <p className="text-red-600">{errors[role].message}</p>}
+              </div>
+            ))}
+
+            <div className="col-span-2">
+              <label>Anno stagione</label>
+              <input
+                type="number"
+                {...register('seasonYear')}
+                disabled={true}
+                readOnly
+                className="bg-gray-200 text-black border p-2 rounded w-full cursor-not-allowed"
+              />
+              {errors.seasonYear && <p className="text-red-600">{errors.seasonYear.message}</p>}
+            </div>
+          </div>
+
+          {/* Eventi */}
+          <div>
+            <label className="font-medium">Eventi Riproduzione</label>
+            {events.map((field, idx) => (
+              <div key={field.id} className="bg-white text-black flex items-end gap-2 mb-2">
+                <select
+                  {...register(`events.${idx}.type`)}
+                  disabled={!seasonOpen}
+                  className="bg-white text-black border p-2 rounded"
+                >
+                  {eventTypes.map(e => <option key={e.value} value={e.value}>{e.label}</option>)}
+                </select>
+                <input
+                  type="date"
+                  {...register(`events.${idx}.date`)}
+                  disabled={!seasonOpen}
+                  min={`${currentYear}-01-01`}
+                  placeholder="yyyy-mm-dd"
+                  className="bg-white text-black border p-2 rounded cursor-pointer"
+                  onClick={e => e.target.showPicker?.()} // Forza apertura picker su click campo (solo browser che supportano)
+                  onKeyDown={e => {
+                    // evita errore Invalid Date se cancello data (setta a null)
+                    if (e.key === 'Delete' || e.key === 'Backspace') {
+                      setValue(`events.${idx}.date`, '', { shouldValidate: true });
+                    }
+                  }}
+                />
+                {seasonOpen && (
+                  <button
+                    type="button"
+                    disabled={field.type === 'pairing'}
+                    onClick={() => removeEvent(idx)}
+                    className={`bg-white text-black text-red-600 text-xl ${field.type === 'pairing' ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    ✕
+                  </button>)}
+
+                {/* Errori */}
+                {errors.events?.[idx]?.date && <p className="text-red-600">{errors.events[idx].date.message}</p>}
+              </div>
+            ))}
+
+            {seasonOpen && (
+              <select
+                onChange={e => {
+                  if (!e.target.value) return;
+                  addEvent({ type: e.target.value, date: '', notes: '' });
+                  e.target.value = '';
+                }}
+                className="bg-white text-black mt-2 border p-2 rounded"
+              >
+                <option value="">+ Aggiungi evento</option>
+                {eventTypes.map(e => <option key={e.value} value={e.value}>{e.label}</option>)}
+              </select>
+            )}
+          </div>
+
+          <div className="mt-4">
+            <label>Note generali</label>
+            <textarea
+              {...register('notes')}
+              disabled={!seasonOpen}
+              className="bg-white text-black border p-2 rounded w-full"
+              rows={3}
+            />
+            {errors.notes && <p className="text-red-600">{errors.notes.message}</p>}
+          </div>
+
+          {/* Cuccioli */}
+
+          {hasBirthEvent && (
+            <div>
+              <label className="font-medium">Cuccioli</label>
+              {hatchlings.map((f, i) => (
+                <div key={f.id} className="bg-white text-black flex items-end gap-2 mb-2">
+                  <input
+                    placeholder="Morph"
+                    {...register(`hatchlings.${i}.morph`)}
+                    disabled={!seasonOpen}
+                    className="bg-white text-black border p-2 rounded"
+                  />
+                  <input
+                    type="number"
+                    placeholder="Peso g"
+                    {...register(`hatchlings.${i}.weight`)}
+                    disabled={!seasonOpen}
+                    className="bg-white text-black border p-2 rounded"
+                  />
+                  <select
+                    {...register(`hatchlings.${i}.sex`)}
+                    disabled={!seasonOpen}
+                    className="bg-white text-black border p-2 rounded"
+                  >
+                    <option value="">Sesso</option>
+                    {sexOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+                  </select>
+                  {seasonOpen && (
+                    <button type="button" onClick={() => removeHatchling(i)} className="text-red-600 text-xl">✕</button>
+                  )}
+
+                  {/* Errori */}
+                  {errors.hatchlings?.[i]?.morph && <p className="text-red-600">{errors.hatchlings[i].morph.message}</p>}
+                </div>
+              ))}
+
+              {seasonOpen && (
+                <button
+                  type="button"
+                  onClick={() => addHatchling({ morph: '', weight: '', sex: 'U' })}
+                  className="text-blue-600 mt-2"
+                >
+                  + cucciolo
+                </button>
+              )}
+            </div>
+          )}
 
                 <button
                   type="submit"
