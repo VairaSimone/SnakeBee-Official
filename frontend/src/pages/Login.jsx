@@ -24,7 +24,7 @@ const Login = () => {
         headers: { 'Content-Type': 'application/json' }
       });
 
-      const { accessToken } = res.data;
+      const { accessToken, refreshToken  } = res.data;
       localStorage.setItem('token', accessToken);
 if (refreshToken) localStorage.setItem('refreshToken', refreshToken);
 
