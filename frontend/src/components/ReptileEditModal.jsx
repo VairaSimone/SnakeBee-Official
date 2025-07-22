@@ -54,32 +54,32 @@ const ReptileEditModal = ({ show, handleClose, reptile, setReptiles, onSuccess }
     setImage(file);
     setErrorMessage('');
   };
-const validateBirthDate = () => {
-  const today = new Date();
-  const minDate = new Date();
-  minDate.setFullYear(today.getFullYear() - 100);
+  const validateBirthDate = () => {
+    const today = new Date();
+    const minDate = new Date();
+    minDate.setFullYear(today.getFullYear() - 100);
 
-  const birth = new Date(formData.birthDate);
+    const birth = new Date(formData.birthDate);
 
-  if (birth > today) {
-    setErrorMessage('La data di nascita non può essere nel futuro');
-    return false;
-  } else if (birth < minDate) {
-    setErrorMessage('La data di nascita è troppo antica (max 100 anni fa)');
-    return false;
-  }
+    if (birth > today) {
+      setErrorMessage('La data di nascita non può essere nel futuro');
+      return false;
+    } else if (birth < minDate) {
+      setErrorMessage('La data di nascita è troppo antica (max 100 anni fa)');
+      return false;
+    }
 
-  return true;
-};
+    return true;
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setToastMsg(null);
-  setErrorMessage('');
-  if (!validateBirthDate()) {
-    setLoading(false);
-    return;
-  }
+    setErrorMessage('');
+    if (!validateBirthDate()) {
+      setLoading(false);
+      return;
+    }
     try {
       const formDataToSubmit = new FormData();
       Object.entries(formData).forEach(([key, val]) => {
@@ -118,54 +118,136 @@ const validateBirthDate = () => {
 
   return (
     <div
-      id="overlay"
-      onClick={closeOnOverlayClick}
-      className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 sm:p-8"
+  id="overlay"
+  onClick={closeOnOverlayClick}
+  className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="modal-title"
+>
+  <div className="bg-white text-black w-full sm:max-w-xl lg:max-w-3xl rounded-xl p-6 sm:p-8 shadow-lg relative max-h-[90vh] overflow-y-auto">
+
+    <button
+      onClick={handleClose}
+      className="absolute top-4 right-4 text-gray-600 hover:text-red-600 text-2xl font-bold"
+      aria-label="Chiudi modale"
     >
-      <div className="bg-white text-black w-full max-w-3xl rounded-xl p-6 shadow-lg relative max-h-[90vh] overflow-y-auto">
-        <button onClick={handleClose} className="absolute top-4 right-4 text-gray-600 hover:text-red-600 text-2xl font-bold">
-          &times;
-        </button>
+      &times;
+    </button>
 
-        <h2 className="text-xl font-bold mb-4">Modifica Rettile</h2>
-        {errorMessage && <p className="text-red-600 mb-2">{errorMessage}</p>}
+    <h2 id="modal-title" className="text-2xl font-semibold mb-6">Modifica Rettile</h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <input type="text" name="name" value={formData.name} onChange={handleChange} placeholder="Nome" className="border p-2 rounded bg-white text-black w-full" />
-            <input type="text" name="species" value={formData.species} onChange={handleChange} placeholder="Specie" required className="border p-2 rounded bg-white text-black w-full" />
-            <input type="text" name="morph" value={formData.morph} onChange={handleChange} placeholder="Morph" required className="border p-2 rounded bg-white text-black w-full" />
-            <input type="date" name="birthDate" value={formData.birthDate} required onChange={handleChange} className="border p-2 rounded bg-white text-black w-full cursor-pointer"  max={new Date().toISOString().split('T')[0]}
-  min={new Date(new Date().setFullYear(new Date().getFullYear() - 100)).toISOString().split('T')[0]}/>
-            <select name="sex" value={formData.sex} onChange={handleChange} className="border p-2 rounded bg-white text-black w-full">
-              <option value="">Seleziona sesso</option>
-              <option value="M">Maschio</option>
-              <option value="F">Femmina</option>
-            </select>
-            <input type="file" name="image" onChange={handleFileChange} className="border p-2 rounded bg-white text-black w-full" />
-          </div>
+    {errorMessage && (
+      <p className="text-red-600 mb-4 text-sm sm:text-base">{errorMessage}</p>
+    )}
 
-          <label className="flex items-center mt-2 space-x-2 cursor-pointer">
-            <input type="checkbox" name="isBreeder" checked={formData.isBreeder} onChange={handleChange} />
-            <span>È un riproduttore</span>
-          </label>
+    <form onSubmit={handleSubmit} className="space-y-4">
 
-          <textarea name="notes" value={formData.notes} onChange={handleChange} placeholder="Note veterinarie o generiche" className="border p-2 rounded bg-white text-black w-full" rows={2} />
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <input
+          type="text"
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          placeholder="Nome"
+          className="border p-3 rounded w-full bg-white text-black"
+          autoFocus
+        />
 
-          <div className="text-right mt-6">
-            <button type="submit" disabled={loading} className="bg-green-700 text-white px-4 py-2 rounded hover:bg-green-800">
-              {loading ? 'Salvataggio...' : 'Salva Rettile'}
-            </button>
-          </div>
-        </form>
+        <input
+          type="text"
+          name="species"
+          value={formData.species}
+          onChange={handleChange}
+          placeholder="Specie"
+          required
+          className="border p-3 rounded w-full bg-white text-black"
+        />
 
-        {toastMsg && (
-          <div className={`mt-4 p-2 text-center rounded ${toastMsg.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-            {toastMsg.text}
-          </div>
-        )}
+        <input
+          type="text"
+          name="morph"
+          value={formData.morph}
+          onChange={handleChange}
+          placeholder="Morph"
+          required
+          className="border p-3 rounded w-full bg-white text-black"
+        />
+
+        <input
+          type="date"
+          name="birthDate"
+          value={formData.birthDate}
+          required
+          onChange={handleChange}
+          className="border p-3 rounded w-full bg-white text-black cursor-pointer"
+          max={new Date().toISOString().split('T')[0]}
+          min={new Date(new Date().setFullYear(new Date().getFullYear() - 100)).toISOString().split('T')[0]}
+        />
+
+        <select
+          name="sex"
+          value={formData.sex}
+          onChange={handleChange}
+          className="border p-3 rounded w-full bg-white text-black"
+        >
+          <option value="">Seleziona sesso</option>
+          <option value="M">Maschio</option>
+          <option value="F">Femmina</option>
+        </select>
+
+        <input
+          type="file"
+          name="image"
+          onChange={handleFileChange}
+          className="border p-3 rounded w-full bg-white text-black"
+        />
       </div>
-    </div>
+
+      <label className="flex items-center space-x-2 mt-2 cursor-pointer text-sm sm:text-base">
+        <input
+          type="checkbox"
+          name="isBreeder"
+          checked={formData.isBreeder}
+          onChange={handleChange}
+        />
+        <span>È un riproduttore</span>
+      </label>
+
+      <textarea
+        name="notes"
+        value={formData.notes}
+        onChange={handleChange}
+        placeholder="Note veterinarie o generiche"
+        className="border p-3 rounded w-full bg-white text-black"
+        rows={2}
+      />
+
+      <div className="text-end pt-4">
+        <button
+          type="submit"
+          disabled={loading}
+          className="bg-green-700 text-white px-5 py-2 rounded hover:bg-green-800 disabled:opacity-50"
+        >
+          {loading ? 'Salvataggio...' : 'Salva Rettile'}
+        </button>
+      </div>
+    </form>
+
+    {toastMsg && (
+      <div
+        className={`mt-4 p-3 text-center rounded ${
+          toastMsg.type === 'success'
+            ? 'bg-green-100 text-green-800'
+            : 'bg-red-100 text-red-800'
+        }`}
+      >
+        {toastMsg.text}
+      </div>
+    )}
+  </div>
+</div>
+
   );
 };
 

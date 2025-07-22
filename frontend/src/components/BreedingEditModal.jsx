@@ -94,93 +94,144 @@ const BreedingEditModal = ({ breeding, show, handleClose, refresh }) => {
   };
 
   if (!show || !breeding) return null;
+return (
+  <div className="fixed inset-0 bg-black/50 flex justify-center items-center p-2 sm:p-4 z-50">
+    <div
+      ref={modalRef}
+      className="bg-white text-black rounded-xl p-4 sm:p-6 w-full max-w-3xl max-h-[90vh] overflow-y-auto"
+    >
+      <button onClick={handleClose} className="float-right text-2xl">×</button>
+      <h3 className="text-xl sm:text-2xl font-bold mb-4">Modifica Riproduzione</h3>
 
-  return (
-    <div className="fixed inset-0 bg-black/50 flex justify-center items-center p-4 z-50">
-      <div ref={modalRef} className="bg-white text-black rounded-xl p-6 w-full max-w-3xl max-h-full overflow-auto">
-        <button onClick={handleClose} className="float-right text-2xl">×</button>
-        <h3 className="text-2xl font-bold mb-4">Modifica Riproduzione</h3>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        {/* Eventi */}
+        <div>
+          <label className="font-medium">Eventi</label>
+          {events.map((field, idx) => (
+            <div key={field.id} className="flex flex-col sm:flex-row sm:items-end gap-2 mb-2">
+              <select
+                {...register(`events.${idx}.type`)}
+                className="bg-white text-black border p-2 rounded w-full sm:w-1/3"
+              >
+                {eventTypes.map(e => (
+                  <option key={e.value} value={e.value}>{e.label}</option>
+                ))}
+              </select>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          {/* Eventi */}
-          <div>
-            <label className="font-medium">Eventi</label>
-            {events.map((field, idx) => (
-              <div key={field.id} className="flex items-end gap-2 mb-2">
-                <select {...register(`events.${idx}.type`)} className="bg-white text-black border p-2 rounded w-1/3">
-                  {eventTypes.map(e => <option key={e.value} value={e.value}>{e.label}</option>)}
-                </select>
+              <input
+                type="date"
+                {...register(`events.${idx}.date`)}
+                className="bg-white text-black border p-2 rounded w-full sm:w-1/3"
+              />
 
-                <input
-                  type="date"
-                  {...register(`events.${idx}.date`)}
-                  className="bg-white text-black border p-2 rounded w-1/3"
-                />
+              <input
+                type="text"
+                placeholder="Note"
+                {...register(`events.${idx}.notes`)}
+                className="bg-white text-black border p-2 rounded w-full sm:w-1/3"
+              />
 
-                <input
-                  type="text"
-                  placeholder="Note"
-                  {...register(`events.${idx}.notes`)}
-                  className="bg-white text-black border p-2 rounded w-1/3"
-                />
+              <button
+                type="button"
+                onClick={() => removeEvent(idx)}
+                className="text-red-600 text-xl"
+              >
+                ✕
+              </button>
+            </div>
+          ))}
 
-                <button type="button" onClick={() => removeEvent(idx)} className="text-red-600 text-xl">✕</button>
-              </div>
+          <select
+            onChange={e => {
+              if (!e.target.value) return;
+              addEvent({ type: e.target.value, date: '', notes: '' });
+              e.target.value = '';
+            }}
+            className="bg-white text-black border p-2 rounded mt-2 w-full sm:w-auto"
+          >
+            <option value="">+ Aggiungi evento</option>
+            {eventTypes.map(e => (
+              <option key={e.value} value={e.value}>{e.label}</option>
             ))}
-            <select
-              onChange={e => {
-                if (!e.target.value) return;
-                addEvent({ type: e.target.value, date: '', notes: '' });
-                e.target.value = '';
-              }}
-              className="bg-white text-black border p-2 rounded mt-2"
-            >
-              <option value="">+ Aggiungi evento</option>
-              {eventTypes.map(e => <option key={e.value} value={e.value}>{e.label}</option>)}
-            </select>
-          </div>
+          </select>
+        </div>
 
-          {/* Hatchlings */}
-          <div>
-            <label className="font-medium">Cuccioli</label>
-            {hatchlings.map((f, i) => (
-              <div key={f.id} className="flex items-end gap-2 mb-2">
-                <input placeholder="Morph" {...register(`hatchlings.${i}.morph`)} className="border p-2 rounded" />
-                <input type="number" placeholder="Peso (g)" {...register(`hatchlings.${i}.weight`)} className="border p-2 rounded" />
-                <select {...register(`hatchlings.${i}.sex`)} className="border p-2 rounded">
-                  <option value="">Sesso</option>
-                  {sexOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-                </select>
-                <button type="button" onClick={() => removeHatchling(i)} className="text-red-600 text-xl">✕</button>
-              </div>
-            ))}
-            <button
-              type="button"
-              onClick={() => addHatchling({ morph: '', weight: '', sex: 'U' })}
-              className="text-blue-600 mt-2"
-            >
-              + Cucciolo
-            </button>
-          </div>
+        {/* Cuccioli */}
+        <div>
+          <label className="font-medium">Cuccioli</label>
+          {hatchlings.map((f, i) => (
+            <div key={f.id} className="flex flex-col sm:flex-row sm:items-end gap-2 mb-2">
+              <input
+                placeholder="Morph"
+                {...register(`hatchlings.${i}.morph`)}
+                className="bg-white text-black border p-2 rounded w-full sm:w-1/3"
+              />
 
-          {/* Note */}
-          <div>
-            <label>Note generali</label>
-            <textarea {...register('notes')} className="bg-white text-black border p-2 rounded w-full" rows={3} />
-            {errors.notes && <p className="text-red-600">{errors.notes.message}</p>}
-          </div>
+              <input
+                type="number"
+                placeholder="Peso (g)"
+                {...register(`hatchlings.${i}.weight`)}
+                className="bg-white text-black border p-2 rounded w-full sm:w-1/3"
+              />
+
+              <select
+                {...register(`hatchlings.${i}.sex`)}
+                className="bg-white text-black border p-2 rounded w-full sm:w-1/3"
+              >
+                <option value="">Sesso</option>
+                {sexOptions.map(opt => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+
+              <button
+                type="button"
+                onClick={() => removeHatchling(i)}
+                className="text-red-600 text-xl"
+              >
+                ✕
+              </button>
+            </div>
+          ))}
 
           <button
-            type="submit"
-            disabled={!isValid || loading}
-            className={`py-3 px-6 rounded w-full font-semibold ${isValid ? 'bg-green-600 hover:bg-green-700 text-white' : 'bg-gray-300 text-gray-500 cursor-not-allowed'}`}
+            type="button"
+            onClick={() => addHatchling({ morph: '', weight: '', sex: 'U' })}
+            className="text-blue-600 mt-2"
           >
-            {loading ? 'Salvataggio in corso...' : 'Salva modifiche'}
+            + Cucciolo
           </button>
-        </form>
-      </div>
+        </div>
+
+        {/* Note */}
+        <div>
+          <label>Note generali</label>
+          <textarea
+            {...register('notes')}
+            className="bg-white text-black border p-2 rounded w-full"
+            rows={3}
+          />
+          {errors.notes && (
+            <p className="text-red-600">{errors.notes.message}</p>
+          )}
+        </div>
+
+        <button
+          type="submit"
+          disabled={!isValid || loading}
+          className={`py-3 px-6 rounded w-full font-semibold ${
+            isValid
+              ? 'bg-green-600 hover:bg-green-700 text-white'
+              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+          }`}
+        >
+          {loading ? 'Salvataggio in corso...' : 'Salva modifiche'}
+        </button>
+      </form>
     </div>
-  );
+  </div>
+);
+
 };
 
 export default BreedingEditModal;
