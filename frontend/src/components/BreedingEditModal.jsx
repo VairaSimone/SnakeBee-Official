@@ -7,6 +7,8 @@ import { toast } from 'react-toastify';
 import { eventTypes, sexOptions } from '../utils/constantsBreeding';
 import { validateDatesSequence } from '../utils/validateDatesSequence';
 import { Dialog, Transition } from '@headlessui/react';
+import { useForm, useFieldArray, useWatch } from 'react-hook-form';
+
 const hatchlingSchema = yup.object({
   morph: yup.string().required('Morph è richiesto'),
   sex: yup.string().oneOf(['M', 'F', 'U']).required('Sesso è richiesto'),
@@ -28,6 +30,8 @@ const schema = yup.object({
 const BreedingEditModal = ({ breeding, show, handleClose, refresh }) => {
   const modalRef = useRef(null);
   const [loading, setLoading] = useState(false);
+const watchedEvents = useWatch({ control, name: 'events' });
+const hasBirthEvent = watchedEvents?.some(e => e?.type === 'birth');
 
   const { register, control, handleSubmit, reset, formState: { errors, isValid } } = useForm({
     resolver: yupResolver(schema),
@@ -136,14 +140,14 @@ return (
                     <label className="block text-sm font-medium text-gray-800 mb-1">Eventi</label>
                     {events.map((field, idx) => (
                       <div key={field.id} className="grid md:grid-cols-4 gap-2 mb-2">
-                        <select {...register(`events.${idx}.type`)} className="border p-2 rounded text-sm">
+                        <select {...register(`events.${idx}.type`)} className="bg-white tx-black border p-2 rounded text-sm">
                           {eventTypes.map(e => (
                             <option key={e.value} value={e.value}>{e.label}</option>
                           ))}
                         </select>
 
-                        <input type="date" {...register(`events.${idx}.date`)} className="border p-2 rounded text-sm" />
-                        <input type="text" placeholder="Note" {...register(`events.${idx}.notes`)} className="border p-2 rounded text-sm" />
+                        <input type="date" {...register(`events.${idx}.date`)} className="bg-white tx-black border p-2 rounded text-sm" />
+                        <input type="text" placeholder="Note" {...register(`events.${idx}.notes`)} className="bg-white tx-black border p-2 rounded text-sm" />
 
                         <button type="button" onClick={() => removeEvent(idx)} className="text-red-600 text-xl">✕</button>
                       </div>
@@ -155,7 +159,7 @@ return (
                         addEvent({ type: e.target.value, date: '', notes: '' });
                         e.target.value = '';
                       }}
-                      className="border p-2 rounded text-sm mt-2"
+                      className="bg-white tx-black border p-2 rounded text-sm mt-2"
                     >
                       <option value="">+ Aggiungi evento</option>
                       {eventTypes.map(e => (
@@ -165,58 +169,59 @@ return (
                   </div>
 
                   {/* Cuccioli */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-800 mb-1">Cuccioli</label>
-                    {hatchlings.map((f, i) => (
-                      <div key={f.id} className="grid md:grid-cols-4 gap-2 mb-2">
-                        <input
-                          placeholder="Morph"
-                          {...register(`hatchlings.${i}.morph`)}
-                          className="border p-2 rounded text-sm"
-                        />
+{/* Cuccioli (visibili solo se c'è un evento di nascita) */}
+{hasBirthEvent && (
+  <div>
+    <label className="block text-sm font-medium text-gray-800 mb-1">Cuccioli</label>
 
-                        <input
-                          type="number"
-                          placeholder="Peso (g)"
-                          {...register(`hatchlings.${i}.weight`)}
-                          className="border p-2 rounded text-sm"
-                        />
+    {hatchlings.map((f, i) => (
+      <div key={f.id} className="grid md:grid-cols-4 gap-2 mb-2">
+        <input
+          placeholder="Morph"
+          {...register(`hatchlings.${i}.morph`)}
+          className="bg-white tx-black border p-2 rounded text-sm"
+        />
+        <input
+          type="number"
+          placeholder="Peso (g)"
+          {...register(`hatchlings.${i}.weight`)}
+          className="bg-white tx-black border p-2 rounded text-sm"
+        />
+        <select
+          {...register(`hatchlings.${i}.sex`)}
+          className="bg-white tx-black border p-2 rounded text-sm"
+        >
+          <option value="">Sesso</option>
+          {sexOptions.map(opt => (
+            <option key={opt.value} value={opt.value}>{opt.label}</option>
+          ))}
+        </select>
+        <button
+          type="button"
+          onClick={() => removeHatchling(i)}
+          className="bg-white tx-black text-red-600 text-xl"
+        >
+          ✕
+        </button>
+      </div>
+    ))}
 
-                        <select
-                          {...register(`hatchlings.${i}.sex`)}
-                          className="border p-2 rounded text-sm"
-                        >
-                          <option value="">Sesso</option>
-                          {sexOptions.map(opt => (
-                            <option key={opt.value} value={opt.value}>{opt.label}</option>
-                          ))}
-                        </select>
-
-                        <button
-                          type="button"
-                          onClick={() => removeHatchling(i)}
-                          className="text-red-600 text-xl"
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    ))}
-
-                    <button
-                      type="button"
-                      onClick={() => addHatchling({ morph: '', weight: '', sex: 'U' })}
-                      className="text-blue-600 mt-2 text-sm"
-                    >
-                      + Cucciolo
-                    </button>
-                  </div>
+    <button
+      type="button"
+      onClick={() => addHatchling({ morph: '', weight: '', sex: 'U' })}
+      className=" bg-white tx-blacktext-blue-600 mt-2 text-sm"
+    >
+      + Cucciolo
+    </button>
+  </div>
+)}
 
                   {/* Note */}
                   <div>
                     <label className="block text-sm font-medium text-gray-800 mb-1">Note generali</label>
                     <textarea
                       {...register('notes')}
-                      className="border p-2 rounded w-full text-sm"
+                      className="bg-white tx-black border p-2 rounded w-full text-sm"
                       rows={3}
                     />
                     {errors.notes && <p className="text-red-600 text-sm mt-1">{errors.notes.message}</p>}
