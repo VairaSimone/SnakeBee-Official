@@ -316,7 +316,7 @@ const Dashboard = () => {
       />
 <ConfirmDeleteModal
   show={showDeleteModal}
-  handleClose={() => {
+  onClose={() => {
     setShowDeleteModal(false);
     setPendingDelete(null);
   }}
