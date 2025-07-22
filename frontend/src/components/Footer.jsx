@@ -32,7 +32,7 @@ const Footer = () => {
             <a href="https://www.facebook.com/profile.php?id=61578296802324" aria-label="Facebook" className="hover:text-[#FFD700] transition">
               <i className="fab fa-facebook-f"></i>
             </a>
-            <a href="https://instagram.com" aria-label="Instagram" className="hover:text-[#FFD700] transition">
+            <a href="https://www.instagram.com/snakebeeofficial/" aria-label="Instagram" className="hover:text-[#FFD700] transition">
               <i className="fab fa-instagram"></i>
             </a>
           </div>
