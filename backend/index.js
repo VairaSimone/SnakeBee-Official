@@ -52,6 +52,9 @@ mongoose
   .connect(process.env.MONGO_STRING)
   .then(() => console.log("Connected database"))
   .catch((err) => console.log(err))
+  app.get('/ping', (req, res) => {
+  res.status(200).send('OK');
+});
 app.use('/cloudinary', cloudinaryRouter);
 app.use("/api/v1/", authRouter)
 app.use('/user', userRouter);
