@@ -7,17 +7,8 @@ export const isAdmin = (req, res, next) => {
 
 export const isOwnerOrAdmin = (model, idField = 'userId') => async (req, res, next) => {
     try {
-    let resourceId;
-    if (req.params[idField]) {
-      resourceId = req.params[idField];
-    } else if (req.params.feedingId && model.modelName === 'Reptile') {
-      // Caso specifico: prendiamo l’ID del rettile a partire dal feeding
-      const feeding = await Feeding.findById(req.params.feedingId).populate('reptile');
-      if (!feeding || !feeding.reptile) {
-        return res.status(404).json({ message: 'Feeding or reptile not found' });
-      }
-      resourceId = feeding.reptile._id;
-    }
+        const resourceId = req.params[idField] || req.params.id;
+
         if (!resourceId) {
             if (req.user && req.user.role === 'admin') {
                 return next();
