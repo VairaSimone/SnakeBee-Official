@@ -7,7 +7,9 @@ const feedingSchema = new Schema(
         foodType: { type: String, required: true },
         quantity: { type: Number },
         nextFeedingDate: { type: Date, required: true }, 
-        notes: { type: String }
+        notes: { type: String },
+        wasEaten: { type: Boolean, default: true }, 
+    retryAfterDays: { type: Number },  
     },
     {
         collection: "Feeding"

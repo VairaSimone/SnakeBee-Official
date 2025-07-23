@@ -35,14 +35,20 @@ export const exportReptileData = async (req, res) => {
       { header: 'Species', key: 'species' },
       { header: 'Morph', key: 'morph' },
       { header: 'Sex', key: 'sex' },
-      { header: 'Birth Date', key: 'birthDate' }
+      { header: 'Birth Date', key: 'birthDate' },
+  { header: 'Is Breeder', key: 'isBreeder' },
+{ header: 'Note', key: 'notes' },
+
     ];
     reptileSheet.addRows(reptiles.map(r => ({
       name: r.name || 'N/A',
       species: r.species,
       morph: r.morph || 'No morph',
       sex: r.sex || 'Unknown',
-      birthDate: r.birthDate ? new Date(r.birthDate).toLocaleDateString() : 'N/A'
+      birthDate: r.birthDate ? new Date(r.birthDate).toLocaleDateString() : 'N/A',
+    isBreeder: r.isBreeder ? 'Yes' : 'No',
+notes: r.notes || '',
+
     })));
 
     // 🍗 Feedings
@@ -52,14 +58,21 @@ export const exportReptileData = async (req, res) => {
       { header: 'Date', key: 'date' },
       { header: 'Food Type', key: 'foodType' },
       { header: 'Quantity', key: 'quantity' },
-      { header: 'Next Feeding', key: 'nextFeedingDate' }
+      { header: 'Next Feeding', key: 'nextFeedingDate' },
+    { header: 'Was Eaten', key: 'wasEaten' },
+{ header: 'Retry After Days', key: 'retryAfterDays' },
+{ header: 'Notes', key: 'notes' },
     ];
     feedingSheet.addRows(feedings.map(f => ({
       reptile: `${reptileMap[f.reptile]?.morph} - ${reptileMap[f.reptile]?.sex}`,
       date: f.date ? new Date(f.date).toLocaleDateString() : '',
       foodType: f.foodType,
       quantity: f.quantity,
-      nextFeedingDate: f.nextFeedingDate ? new Date(f.nextFeedingDate).toLocaleDateString() : ''
+      nextFeedingDate: f.nextFeedingDate ? new Date(f.nextFeedingDate).toLocaleDateString() : '',
+      wasEaten: f.wasEaten ? 'Yes' : 'No',
+retryAfterDays: f.retryAfterDays ?? '',
+notes: f.notes || ''
+
     })));
 
     // 📅 Events
@@ -68,13 +81,17 @@ export const exportReptileData = async (req, res) => {
       { header: 'Reptile (Morph - Sex)', key: 'reptile' },
       { header: 'Type', key: 'type' },
       { header: 'Date', key: 'date' },
-      { header: 'Notes', key: 'notes' }
+      { header: 'Notes', key: 'notes' },
+      { header: 'Weight (g)', key: 'weight' },
+
     ];
     eventSheet.addRows(events.map(e => ({
       reptile: `${reptileMap[e.reptile]?.morph} - ${reptileMap[e.reptile]?.sex}`,
       type: e.type,
       date: e.date ? new Date(e.date).toLocaleDateString() : '',
-      notes: e.notes || ''
+      notes: e.notes || '',
+      weight: e.type === 'weight' ? e.weight : '',
+
     })));
 
     // 🐣 Breedings

@@ -75,19 +75,25 @@ cron.schedule('0 0 * * *', async () => {
         if (!notificationsByUser[userId]) {
           notificationsByUser[userId] = {
             user,
-            reptiles: [],
+reptilesMap: new Map(),
           };
         }
-        notificationsByUser[userId].reptiles.push({
-  name: getReptileDisplayName(reptile),
-          reptileId: reptile._id,
-        });
+notificationsByUser[userId].reptilesMap.set(
+  reptile._id.toString(),
+  getReptileDisplayName(reptile)
+);
       }
 
       // Create a notification for each user and send summary emails
-      for (const userId in notificationsByUser) {
-        const { reptiles, user } = notificationsByUser[userId];
-        let emailsSent = 0;
+for (const userId in notificationsByUser) {
+  const user = notificationsByUser[userId].user;
+  const reptiles = Array.from(notificationsByUser[userId].reptilesMap.entries()).map(
+    ([reptileId, name]) => ({
+      name,
+      reptileId
+    })
+  );
+          let emailsSent = 0;
         let emailsFailed = 0;
 
         const reptileList = reptiles.map((r) => r.name).join(', ');

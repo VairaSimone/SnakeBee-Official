@@ -13,6 +13,7 @@ const ReptileDetails = () => {
   const [visibleShed, setVisibleShed] = useState(5);
   const [visibleFeces, setVisibleFeces] = useState(5);
   const [visibleVet, setVisibleVet] = useState(5);
+const [visibleWeight, setVisibleWeight] = useState(5);
 
   const handleShowMore = () => {
     setVisibleFeedings(prev => prev + 5);
@@ -108,14 +109,32 @@ const ReptileDetails = () => {
             {feedings.length > 0 ? (
               <>
                 <ul className="space-y-2">
-                  {feedings.slice(0, visibleFeedings).map((feed, i) => (
-                    <li key={i} className="bg-[#EDE7D6] p-2 rounded glow-hover fade-in-up">
-                      <p><strong>Data:</strong> {new Date(feed.date).toLocaleDateString()}</p>
-                      <p><strong>Tipo cibo:</strong> {feed.foodType}</p>
-                      <p><strong>Quantità:</strong> {feed.quantity || 'N/A'}</p>
-                      <p><strong>Prossimo pasto:</strong> {new Date(feed.nextFeedingDate).toLocaleDateString()}</p>
-                    </li>
-                  ))}
+                {feedings.slice(0, visibleFeedings).map((feed, i) => (
+  <li key={i} className={`p-3 rounded glow-hover fade-in-up ${feed.wasEaten ? 'bg-[#EDE7D6]' : 'bg-red-100 border border-red-300'}`}>
+    <p><strong>Data:</strong> {new Date(feed.date).toLocaleDateString()}</p>
+    <p><strong>Tipo cibo:</strong> {feed.foodType}</p>
+    <p><strong>Quantità:</strong> {feed.quantity || 'N/A'}</p>
+
+    {feed.wasEaten ? (
+      <>
+        <p><strong>✅ Ha mangiato</strong></p>
+        <p><strong>Prossimo pasto:</strong> {new Date(feed.nextFeedingDate).toLocaleDateString()}</p>
+      </>
+    ) : (
+      <>
+        <p><strong>❌ Non ha mangiato</strong></p>
+        <p><strong>Ritenta tra:</strong> {feed.retryAfterDays || '—'} giorni</p>
+        <p><strong>Prossimo tentativo:</strong> {new Date(feed.nextFeedingDate).toLocaleDateString()}</p>
+      </>
+    )}
+
+    {feed.notes && (
+      <p><strong>Note:</strong> {feed.notes}</p>
+    )}
+  </li>
+))}
+
+
                 </ul>
 
                 {/* Bottoni paginazione */}
@@ -205,6 +224,38 @@ const ReptileDetails = () => {
                   </div>
                 )}
               </div>
+{/* Peso */}
+<div className="mb-6">
+  <h4 className="text-lg font-bold text-[#228B22] mb-2">Peso</h4>
+  {events.filter(e => e.type === 'weight').length > 0 ? (
+    events
+      .filter(e => e.type === 'weight')
+      .sort((a, b) => new Date(b.date) - new Date(a.date))
+      .slice(0, visibleWeight)
+      .map(ev => (
+        <div key={ev._id} className="bg-[#EDE7D6] p-3 rounded shadow-sm mb-2">
+          <p><strong>Data:</strong> {new Date(ev.date).toLocaleDateString()}</p>
+          <p><strong>Peso:</strong> {ev.weight} g</p>
+          {ev.notes && <p><strong>Note:</strong> {ev.notes}</p>}
+        </div>
+      ))
+  ) : (
+    <div className="bg-[#FDF6E3] p-3 rounded shadow-inner text-sm text-gray-600 border border-dashed border-yellow-300">
+      ⚖️ Nessun peso registrato.
+    </div>
+  )}
+
+  {events.filter(e => e.type === 'weight').length > 5 && (
+    <div className="space-x-2">
+      {visibleWeight < events.filter(e => e.type === 'weight').length && (
+        <button onClick={() => setVisibleWeight(visibleWeight + 5)} className="btn-animated btn-sm bg-green-600 text-white px-3 py-1 rounded">Carica altri</button>
+      )}
+      {visibleWeight > 5 && (
+        <button onClick={() => setVisibleWeight(5)} className="btn-animated btn-sm bg-gray-600 text-white px-3 py-1 rounded">Mostra meno</button>
+      )}
+    </div>
+  )}
+</div>
 
               {/* Visita veterinaria */}
               <div className="mb-6">

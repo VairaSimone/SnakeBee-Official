@@ -14,6 +14,8 @@ const FeedingModal = ({ show, handleClose, reptileId, onFeedingAdded, onSuccess 
     nextFeedingDate: '',
     notes: '',
     daysUntilNextFeeding: '',
+      wasEaten: true, // default: ha mangiato
+  retryAfterDays: '',
   });
 
   useEffect(() => {
@@ -49,7 +51,11 @@ const FeedingModal = ({ show, handleClose, reptileId, onFeedingAdded, onSuccess 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await api.post(`/feedings/${reptileId}`, formData);
+      const { data } = await api.post(`/feedings/${reptileId}`,
+        { ...formData,
+              retryAfterDays: formData.wasEaten ? undefined : formData.retryAfterDays,
+
+    });
       onSuccess?.();
       setFeedings([...feedings, data]);
       setFormData({
@@ -59,6 +65,8 @@ const FeedingModal = ({ show, handleClose, reptileId, onFeedingAdded, onSuccess 
         nextFeedingDate: '',
         notes: '',
         daysUntilNextFeeding: '',
+         wasEaten: true,
+      retryAfterDays: '',
       });
       onFeedingAdded?.();
     } catch (err) {
@@ -88,7 +96,52 @@ const FeedingModal = ({ show, handleClose, reptileId, onFeedingAdded, onSuccess 
                     <input type="date" name="date" value={formData.date} onChange={handleChange} required className={inputClasses} />
                     <input type="text" name="foodType" value={formData.foodType} onChange={handleChange} required className={inputClasses} placeholder="Tipo di alimento" />
                     <input type="number" name="quantity" value={formData.quantity} onChange={handleChange} required className={inputClasses} placeholder="Quantità" />
-                    <input type="number" name="daysUntilNextFeeding" value={formData.daysUntilNextFeeding} onChange={handleChange} required className={inputClasses} placeholder="Giorni al prossimo pasto" />
+{formData.wasEaten ? (
+  <input
+    type="number"
+    name="daysUntilNextFeeding"
+    value={formData.daysUntilNextFeeding}
+    onChange={handleChange}
+    required
+    className={inputClasses}
+    placeholder="Giorni al prossimo pasto"
+  />
+) : (
+  <input
+    type="number"
+    name="retryAfterDays"
+    value={formData.retryAfterDays}
+    onChange={handleChange}
+    required
+    className={inputClasses}
+    placeholder="Riprova tra (giorni)"
+  />
+)}
+                    <div className="md:col-span-2">
+  <label className="block text-sm font-medium text-gray-700 mb-1">L'animale ha mangiato?</label>
+  <div className="flex items-center space-x-4">
+    <label className="flex items-center space-x-2">
+      <input
+        type="radio"
+        name="wasEaten"
+        value={true}
+        checked={formData.wasEaten === true}
+        onChange={() => setFormData({ ...formData, wasEaten: true })}
+      />
+      <span>Sì</span>
+    </label>
+    <label className="flex items-center space-x-2">
+      <input
+        type="radio"
+        name="wasEaten"
+        value={false}
+        checked={formData.wasEaten === false}
+        onChange={() => setFormData({ ...formData, wasEaten: false })}
+      />
+      <span>No</span>
+    </label>
+  </div>
+</div>
                     <textarea name="notes" rows={3} value={formData.notes} onChange={handleChange} maxLength={300} className={`${inputClasses} md:col-span-2`} placeholder="Note (max 300 caratteri)" />
                   </div>
 
@@ -99,33 +152,44 @@ const FeedingModal = ({ show, handleClose, reptileId, onFeedingAdded, onSuccess 
 
                 {/* CRONOLOGIA */}
                 <h3 className="text-xl font-semibold mt-10 mb-4 text-gray-800">Cronologia Pasti</h3>
-                <div className="overflow-x-auto text-sm">
-                  <table className="w-full border text-gray-800">
-                    <thead className="bg-gray-100">
-                      <tr>
-                        <th className="p-2">Data</th>
-                        <th className="p-2">Cibo</th>
-                        <th className="p-2">Quantità</th>
-                        <th className="p-2">Prossimo Pasto</th>
-                        <th className="p-2">Note</th>
-                        <th className="p-2">Azioni</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {feedings.map((f) => (
-                        <tr key={f._id} className="odd:bg-white even:bg-gray-50">
-                          <td className="p-2 whitespace-nowrap">{new Date(f.date).toLocaleDateString()}</td>
-                          <td className="p-2 whitespace-nowrap">{f.foodType}</td>
-                          <td className="p-2">{f.quantity || '—'}</td>
-                          <td className="p-2 whitespace-nowrap">{new Date(f.nextFeedingDate).toLocaleDateString()}</td>
-                          <td className="p-2 max-w-xs truncate" title={f.notes}>{f.notes || '—'}</td>
-                          <td className="p-2">
-                            <button onClick={() => handleDelete(f._id)} className="text-red-500 hover:text-red-700 font-semibold">Elimina</button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+<div className="overflow-auto text-sm max-h-64 md:max-h-80 border rounded-md">
+
+<table className="w-full border text-gray-800">
+  <thead className="bg-gray-100">
+    <tr>
+      <th className="p-2">Data</th>
+      <th className="p-2">Cibo</th>
+      <th className="p-2">Quantità</th>
+      <th className="p-2">Prossimo Pasto</th>
+      <th className="p-2">Note</th>
+      <th className="p-2">Esito</th> {/* ✅ Spostato qui */}
+      <th className="p-2">Azioni</th>
+    </tr>
+  </thead>
+  <tbody>
+    {feedings.map((f) => (
+      <tr key={f._id} className="odd:bg-white even:bg-gray-50">
+        <td className="p-2 whitespace-nowrap">{new Date(f.date).toLocaleDateString()}</td>
+        <td className="p-2 whitespace-nowrap">{f.foodType}</td>
+        <td className="p-2">{f.quantity || '—'}</td>
+        <td className="p-2 whitespace-nowrap">{new Date(f.nextFeedingDate).toLocaleDateString()}</td>
+        <td className="p-2 max-w-xs truncate" title={f.notes}>{f.notes || '—'}</td>
+        <td className="p-2">
+          {f.wasEaten ? (
+            <span className="text-green-600 font-semibold">✅ Mang.</span>
+          ) : (
+            <span className="text-red-500 font-semibold">❌ Fallito</span>
+          )}
+        </td>
+        <td className="p-2">
+          <button onClick={() => handleDelete(f._id)} className="text-red-500 hover:text-red-700 font-semibold">Elimina</button>
+        </td>
+      </tr>
+    ))}
+  </tbody>
+</table>
+
+
                 </div>
 
                 {/* PAGINAZIONE */}

@@ -33,13 +33,20 @@ export const GetReptileFeeding = async (req, res) => {
 
 export const PostFeeding = async (req, res) => {
   const { reptileId } = req.params;
-  const { foodType, quantity, notes, date, daysUntilNextFeeding } = req.body;
+  const { foodType, quantity, notes, date, daysUntilNextFeeding, wasEaten, retryAfterDays } = req.body;
 
   try {
     const feedingDate = new Date(date || Date.now());
+    let nextFeedingDate;
 
-    let nextFeedingDate = new Date(feedingDate);
-    nextFeedingDate.setDate(nextFeedingDate.getDate() + parseInt(daysUntilNextFeeding));
+    if (wasEaten) {
+      nextFeedingDate = new Date(feedingDate);
+      nextFeedingDate.setDate(nextFeedingDate.getDate() + parseInt(daysUntilNextFeeding));
+    } else {
+      // Se non ha mangiato, posticipo solo il promemoria
+      nextFeedingDate = new Date(feedingDate);
+      nextFeedingDate.setDate(nextFeedingDate.getDate() + parseInt(retryAfterDays || 3)); // default 3
+    }
 
     const reptile = await Reptile.findById(reptileId);
     if (!reptile) return res.status(404).json({ message: 'Reptile not found' });
@@ -51,6 +58,8 @@ export const PostFeeding = async (req, res) => {
       foodType,
       quantity,
       notes,
+      wasEaten,
+      retryAfterDays: wasEaten ? undefined : retryAfterDays,
     });
 
     const savedFeeding = await newFeeding.save();
