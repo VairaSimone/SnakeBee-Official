@@ -136,7 +136,8 @@ const FeedingModal = ({ show, handleClose, reptileId, onFeedingAdded, onSuccess 
         name="wasEaten"
         value={false}
         checked={formData.wasEaten === false}
-        onChange={() => setFormData({ ...formData, wasEaten: false })}
+        onChange={() => setFormData({ ...formData, wasEaten: false ,
+    daysUntilNextFeeding: '',})}
       />
       <span>No</span>
     </label>
