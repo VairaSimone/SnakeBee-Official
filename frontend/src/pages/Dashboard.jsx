@@ -42,7 +42,8 @@ const Dashboard = () => {
       const enriched = await Promise.all(
         data.dati.map(async (r) => {
           const feedings = await api.get(`/feedings/${r._id}`).then(res => res.data.dati || []);
-
+const today = new Date();
+today.setHours(0, 0, 0, 0); 
           const validFeedings = feedings.map(f => {
             if (f.wasEaten) {
               return f.nextFeedingDate ? new Date(f.nextFeedingDate) : null;
@@ -52,7 +53,7 @@ const Dashboard = () => {
               return retryDate;
             }
             return null;
-          }).filter(d => d instanceof Date && !isNaN(d));
+          }).filter(d => d instanceof Date && !isNaN(d) && d >= today);
 
           const nextDate = validFeedings.length
             ? new Date(Math.min(...validFeedings))
