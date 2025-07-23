@@ -43,7 +43,7 @@ const Dashboard = () => {
         data.dati.map(async (r) => {
           const feedings = await api.get(`/feedings/${r._id}`).then(res => res.data.dati || []);
           const nextDate = feedings.length
-            ? new Date(Math.min(...feedings.map(x => new Date(x.nextFeedingDate))))
+            ? new Date(Math.max(...feedings.map(x => new Date(x.nextFeedingDate))))
             : null;
           return { ...r, nextFeedingDate: nextDate };
         })
