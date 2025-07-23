@@ -30,8 +30,6 @@ const getReptileDisplayName = (reptile) => {
 cron.schedule('0 0 * * *', async () => {
   try {
     const lock = await redlock.acquire(['locks:feedingJob'], 5 * 60 * 1000); // 5 min TTL
-
-
     console.log('JOB - Feeding Job');
 
     try {
@@ -41,19 +39,34 @@ cron.schedule('0 0 * * *', async () => {
       const todayEnd = new Date(todayStart);
       todayEnd.setUTCHours(23, 59, 59, 999);   // Set the hours to midnight in UTC 
 
-      // Find all the feedings that need to be fed today
-      const feedings = await Feeding.find({
-        nextFeedingDate: {
-          $lte: todayEnd,
+      const aggregatedFeedings = await Feeding.aggregate([
+        { $sort: { nextFeedingDate: -1 } },
+        {
+          $group: {
+            _id: "$reptile",
+            feeding: { $first: "$$ROOT" }
+          }
         },
-      }).populate({
+        {
+          $match: {
+            "feeding.nextFeedingDate": {
+              $gte: todayStart,
+              $lte: todayEnd
+            }
+          }
+        }
+      ]);
+            const feedingIds = aggregatedFeedings.map(f => f.feeding._id);
+
+      // Find all the feedings that need to be fed today
+      const feedings = await Feeding.find({ _id: { $in: feedingIds } }).populate({
         path: 'reptile',
         populate: {
           path: 'user',
           select: 'email name receiveFeedingEmails'
         }
       });
-
+      
       // Group feedings by user
       const notificationsByUser = {};
 
