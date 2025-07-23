@@ -15,6 +15,7 @@ const EventModal = ({ show, handleClose, reptileId }) => {
   const indexOfFirstEvent = indexOfLastEvent - eventsPerPage;
   const currentEvents = events.slice(indexOfFirstEvent, indexOfLastEvent);
   const totalPages = Math.ceil(events.length / eventsPerPage);
+  const [weight, setWeight] = useState('');
 
   const eventTypeLabels = {
     shed: 'Muta',
@@ -38,10 +39,22 @@ const EventModal = ({ show, handleClose, reptileId }) => {
   const handleSubmit = async () => {
     if (!date) return;
     await postEvent({ reptileId, type, date, notes });
+
+    if (type === 'weight') {
+      if (!weight || isNaN(weight)) {
+        alert("Inserisci un peso valido.");
+        return;
+      }
+      newEvent.weight = parseFloat(weight);
+    }
+
+    await postEvent(newEvent);
     const updated = await getEvents(reptileId);
     setEvents(updated.data);
     setDate('');
     setNotes('');
+    setWeight('');
+
   };
 
   const handleDelete = async (eventId) => {
@@ -82,14 +95,19 @@ const EventModal = ({ show, handleClose, reptileId }) => {
                 <div className="grid md:grid-cols-2 gap-4 mt-4">
                   <div>
                     <label className="block font-medium text-sm mb-1 text-gray-800">Tipo evento</label>
+
                     <select
                       value={type}
-                      onChange={(e) => setType(e.target.value)}
+                      onChange={(e) => {
+                        setType(e.target.value);
+                        if (e.target.value !== 'weight') setWeight('');
+                      }}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#228B22] focus:border-[#228B22] bg-white text-gray-800 text-sm"
-                    >
-                      <option value="shed">Muta</option>
+                    >                     <option value="shed">Muta</option>
                       <option value="feces">Feci</option>
                       <option value="vet">Visita veterinaria</option>
+                      <option value="weight">Aggiornamento peso</option>
+
                     </select>
                   </div>
 
@@ -113,6 +131,21 @@ const EventModal = ({ show, handleClose, reptileId }) => {
                     className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#228B22] focus:border-[#228B22] bg-white text-gray-800 text-sm"
                   />
                 </div>
+
+                {type === 'weight' && (
+                  <div className="mt-4">
+                    <label className="block font-medium text-sm mb-1 text-gray-800">Peso (grammi)</label>
+                    <input
+                      type="number"
+                      min="0"
+                      value={weight}
+                      onChange={(e) => setWeight(e.target.value)}
+                      placeholder="Inserisci il peso in grammi"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#228B22] focus:border-[#228B22] bg-white text-gray-800 text-sm"
+                    />
+                  </div>
+                )}
+
 
                 <div className="mt-6 text-right">
                   <button
@@ -160,6 +193,13 @@ const EventModal = ({ show, handleClose, reptileId }) => {
                                   {isExpanded ? 'Mostra meno' : 'Mostra di più'}
                                 </button>
                               )}
+
+                              {e.type === 'weight' && e.weight && (
+                                <div className="mt-1 text-sm text-gray-700">
+                                  <span className="font-medium text-gray-800">Peso:</span> {e.weight} g
+                                </div>
+                              )}
+
                             </div>
                           )}
                         </div>
