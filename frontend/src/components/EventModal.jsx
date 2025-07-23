@@ -38,7 +38,13 @@ const EventModal = ({ show, handleClose, reptileId }) => {
 
   const handleSubmit = async () => {
     if (!date) return;
-    await postEvent({ reptileId, type, date, notes });
+
+      const newEvent = {
+    reptileId,
+    type,
+    date,
+    notes
+  };
 
     if (type === 'weight') {
       if (!weight || isNaN(weight)) {
