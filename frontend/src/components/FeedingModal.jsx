@@ -47,7 +47,20 @@ const FeedingModal = ({ show, handleClose, reptileId, onFeedingAdded, onSuccess 
       console.error('Errore durante l\'eliminazione:', err);
     }
   };
-
+useEffect(() => {
+  if (!show) {
+    setFormData({
+      date: '',
+      foodType: '',
+      quantity: '',
+      nextFeedingDate: '',
+      notes: '',
+      daysUntilNextFeeding: '',
+      wasEaten: true,
+      retryAfterDays: '',
+    });
+  }
+}, [show]);
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -126,7 +139,7 @@ const FeedingModal = ({ show, handleClose, reptileId, onFeedingAdded, onSuccess 
         name="wasEaten"
         value={true}
         checked={formData.wasEaten === true}
-        onChange={() => setFormData({ ...formData, wasEaten: true })}
+        onChange={() => setFormData({ ...formData, wasEaten: true, retryAfterDays: '', })}
       />
       <span>Sì</span>
     </label>
