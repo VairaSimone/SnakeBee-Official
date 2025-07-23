@@ -13,12 +13,27 @@ export const GetEvents = async (req, res) => {
 // POST /events
 export const CreateEvent = async (req, res) => {
   try {
-    const { reptileId, type, date, notes } = req.body;
-    const newEvent = new Event({ reptile: reptileId, type, date: new Date(date), notes });
+    const { reptileId, type, date, notes, weight } = req.body;
+
+    const newEventData = {
+      reptile: reptileId,
+      type,
+      date: new Date(date),
+      notes,
+    };
+
+    if (type === 'weight') {
+      if (!weight || isNaN(weight)) {
+        return res.status(400).send({ message: 'Peso non valido per evento di tipo "weight".' });
+      }
+      newEventData.weight = weight;
+    }
+
+    const newEvent = new Event(newEventData);
     const saved = await newEvent.save();
     res.status(201).send(saved);
   } catch (err) {
-    res.status(400).send({ message: 'Error creating event', err });
+    res.status(400).send({ message: 'Errore nella creazione dell\'evento', err });
   }
 };
 
