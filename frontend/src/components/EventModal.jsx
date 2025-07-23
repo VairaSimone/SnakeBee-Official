@@ -20,7 +20,9 @@ const EventModal = ({ show, handleClose, reptileId }) => {
   const eventTypeLabels = {
     shed: 'Muta',
     feces: 'Feci',
-    vet: 'Visita veterinaria'
+    vet: 'Visita veterinaria',
+      weight: 'Aggiornamento peso'
+
   };
 
   useEffect(() => {
@@ -188,26 +190,27 @@ const EventModal = ({ show, handleClose, reptileId }) => {
                             </button>
                           </div>
 
-                          {e.notes && (
-                            <div className="text-sm text-gray-800 whitespace-pre-wrap break-words overflow-hidden">
-                              {displayedNote}
-                              {e.notes.length > 100 && (
-                                <button
-                                  onClick={() => toggleNote(e._id)}
-                                  className="ml-1 text-blue-600 text-xs hover:underline"
-                                >
-                                  {isExpanded ? 'Mostra meno' : 'Mostra di più'}
-                                </button>
-                              )}
+<div className="text-sm text-gray-800 whitespace-pre-wrap break-words overflow-hidden">
+  {e.notes && (
+    <>
+      {displayedNote}
+      {e.notes.length > 100 && (
+        <button
+          onClick={() => toggleNote(e._id)}
+          className="ml-1 text-blue-600 text-xs hover:underline"
+        >
+          {isExpanded ? 'Mostra meno' : 'Mostra di più'}
+        </button>
+      )}
+    </>
+  )}
 
-                              {e.type === 'weight' && e.weight && (
-                                <div className="mt-1 text-sm text-gray-700">
-                                  <span className="font-medium text-gray-800">Peso:</span> {e.weight} g
-                                </div>
-                              )}
-
-                            </div>
-                          )}
+  {e.type === 'weight' && e.weight && (
+    <div className="mt-2 text-sm text-gray-700">
+      <span className="font-medium text-gray-800">Peso:</span> {e.weight} g
+    </div>
+  )}
+</div>
                         </div>
                       );
                     })

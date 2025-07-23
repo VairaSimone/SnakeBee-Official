@@ -42,9 +42,22 @@ const Dashboard = () => {
       const enriched = await Promise.all(
         data.dati.map(async (r) => {
           const feedings = await api.get(`/feedings/${r._id}`).then(res => res.data.dati || []);
-          const nextDate = feedings.length
-            ? new Date(Math.min(...feedings.map(x => new Date(x.nextFeedingDate))))
-            : null;
+       
+    const validFeedings = feedings.map(f => {
+      if (f.wasEaten) {
+        return new Date(f.nextFeedingDate);
+      } else if (f.retryAfterDays && f.date) {
+        const retryDate = new Date(f.date);
+        retryDate.setDate(retryDate.getDate() + parseInt(f.retryAfterDays));
+        return retryDate;
+      }
+      return null;
+    }).filter(d => d instanceof Date && !isNaN(d));
+
+    const nextDate = validFeedings.length
+      ? new Date(Math.min(...validFeedings))
+      : null;
+
           return { ...r, nextFeedingDate: nextDate };
         })
       );
