@@ -42,21 +42,21 @@ const Dashboard = () => {
       const enriched = await Promise.all(
         data.dati.map(async (r) => {
           const feedings = await api.get(`/feedings/${r._id}`).then(res => res.data.dati || []);
-       
-    const validFeedings = feedings.map(f => {
-      if (f.wasEaten) {
-        return new Date(f.nextFeedingDate);
-      } else if (f.retryAfterDays && f.date) {
-        const retryDate = new Date(f.date);
-        retryDate.setDate(retryDate.getDate() + parseInt(f.retryAfterDays));
-        return retryDate;
-      }
-      return null;
-    }).filter(d => d instanceof Date && !isNaN(d));
 
-    const nextDate = validFeedings.length
-      ? new Date(Math.min(...validFeedings))
-      : null;
+          const validFeedings = feedings.map(f => {
+            if (f.wasEaten) {
+              return f.nextFeedingDate ? new Date(f.nextFeedingDate) : null;
+            } else if (f.retryAfterDays && f.date) {
+              const retryDate = new Date(f.date);
+              retryDate.setDate(retryDate.getDate() + parseInt(f.retryAfterDays));
+              return retryDate;
+            }
+            return null;
+          }).filter(d => d instanceof Date && !isNaN(d));
+
+          const nextDate = validFeedings.length
+            ? new Date(Math.min(...validFeedings))
+            : null;
 
           return { ...r, nextFeedingDate: nextDate };
         })
@@ -134,7 +134,7 @@ const Dashboard = () => {
   };
 
   return (
-<div className="p-4 bg-[#FAF3E0] min-h-screen animate-dashboard-fade-in">
+    <div className="p-4 bg-[#FAF3E0] min-h-screen animate-dashboard-fade-in">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
         <div>
           <h2 className="text-2xl font-bold text-[#2B2B2B]">La tua Dashboard</h2>
@@ -218,13 +218,13 @@ const Dashboard = () => {
             <Link
               to={`/reptiles/${reptile._id}`}
               key={reptile._id}
-  className="bg-white rounded-xl shadow p-4 transition cursor-pointer relative block animate-card-appear group hover:scale-[1.02] hover:shadow-xl hover:ring-2 hover:ring-[#228B22] duration-300 ease-out card-glow"
+              className="bg-white rounded-xl shadow p-4 transition cursor-pointer relative block animate-card-appear group hover:scale-[1.02] hover:shadow-xl hover:ring-2 hover:ring-[#228B22] duration-300 ease-out card-glow"
             >
               <div className="aspect-w-16 aspect-h-10 mb-2">
                 <img
                   src={reptile.image || 'https://res.cloudinary.com/dg2wcqflh/image/upload/v1753088270/sq1upmjw7xgrvpkghotk.png'}
                   alt={reptile.name}
-  className="object-cover w-full h-full rounded transform transition duration-300 ease-out group-hover:scale-105 group-hover:rotate-[0.5deg]"
+                  className="object-cover w-full h-full rounded transform transition duration-300 ease-out group-hover:scale-105 group-hover:rotate-[0.5deg]"
                 />
               </div>
               <div className="flex items-center justify-between">
@@ -327,21 +327,21 @@ const Dashboard = () => {
         handleClose={() => setShowEventModal(false)}
         reptileId={selectedReptile?._id}
       />
-<ConfirmDeleteModal
-  show={showDeleteModal}
-  onClose={() => {
-    setShowDeleteModal(false);
-    setPendingDelete(null);
-  }}
-  onConfirm={() => {
-    if (pendingDelete?._id) {
-      handleDelete(pendingDelete._id);
-      setShowDeleteModal(false);
-      setPendingDelete(null);
-    }
-  }}
-  reptile={pendingDelete}
-/>
+      <ConfirmDeleteModal
+        show={showDeleteModal}
+        onClose={() => {
+          setShowDeleteModal(false);
+          setPendingDelete(null);
+        }}
+        onConfirm={() => {
+          if (pendingDelete?._id) {
+            handleDelete(pendingDelete._id);
+            setShowDeleteModal(false);
+            setPendingDelete(null);
+          }
+        }}
+        reptile={pendingDelete}
+      />
     </div>
   );
 };
